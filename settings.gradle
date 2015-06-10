@@ -1,2 +1,2 @@
 include ':deviceHiveAndroid'
-include ':deviceHiveAndroidClientSample'
+include ':deviceHiveAndroidClient'

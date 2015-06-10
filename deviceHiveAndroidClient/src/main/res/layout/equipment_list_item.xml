@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_equipment_name"
+        style="@style/MyTextViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/divider"
+        android:padding="@dimen/tv_title_padding"
+        android:text="@string/et_equipment_name"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:padding="@dimen/tv_content_side_padding">
+
+        <TextView
+            style="@style/MyTextView"
+            android:layout_weight="1"
+            android:text="@string/tv_equipment_code"/>
+
+        <TextView
+            android:id="@+id/tv_equipment_code"
+            style="@style/MyTextView"
+            android:layout_marginEnd="@dimen/divider_padding"
+            android:layout_marginRight="@dimen/divider_padding"
+            android:layout_weight="3"
+            android:gravity="end"
+            android:text="@string/tv_equipment_code_empty"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:padding="@dimen/tv_content_side_padding">
+
+        <TextView
+            style="@style/MyTextView"
+            android:layout_weight="1"
+            android:text="@string/tv_equipment_type"/>
+
+        <TextView
+            android:id="@+id/tv_equipment_type"
+            style="@style/MyTextView"
+            android:layout_marginEnd="@dimen/divider_padding"
+            android:layout_marginRight="@dimen/divider_padding"
+            android:layout_weight="3"
+            android:gravity="end"
+            android:text="@string/tv_equipment_type_empty"/>
+
+    </LinearLayout>
+
+    <!--<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/equipment_data_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_marginLeft="5dp"
+            android:gravity="right"
+            android:text="&#45;&#45;" />
+
+    </LinearLayout>-->
+
+</LinearLayout>

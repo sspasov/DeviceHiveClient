@@ -1,0 +1,59 @@
+<resources>
+
+    <string name="app_name">DH-Client</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_auth">Authorisation</string>
+    <string name="title_activity_networks">Networks</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_startup_configuration">StartupConfigurationActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_login">LoginActivity</string>
+
+
+    <!--Startup Configuration Activity-->
+    <string name="welcome">Welcome to DeviceHive</string>
+    <string name="client">Client</string>
+    <string name="api_endpoint">API Endpoint</string>
+    <string name="logo_content_description">logo</string>
+    <string name="empty_api_endpoint">You must enter server URL.</string>
+
+    <!--Simple Pager Adapter -->
+    <string name="tab_device_info">Info</string>
+    <string name="tab_device_equipment">Equipment</string>
+    <string name="tab_device_notifications">Notifications</string>
+    <string name="tab_device_send_command">Send Command</string>
+
+
+    <!--Device Information Fragment-->
+    <string name="tv_title_device">Device</string>
+    <string name="tv_content_device_name">Device Name</string>
+    <string name="tv_content_device_board">Device Board</string>
+    <string name="tv_content_device_id">Device ID</string>
+    <string name="tv_content_device_status">Device Status</string>
+    <string name="tv_content_device_time_on">Device Time On</string>
+    <string name="tv_content_device_battery">Device Battery</string>
+    <string name="tv_content_device_class_type">Type</string>
+    <string name="tv_content_device_class_version">Version</string>
+    <string name="tv_content_device_class_is_permanent">Is Permanent</string>
+    <string name="tv_content_device_network_name">Name</string>
+    <string name="tv_content_device_network_description">Description</string>
+    <string name="tv_title_device_network">Device Network</string>
+    <string name="tv_title_device_class">Device Class</string>
+    <string name="tv_calculating">calculating</string>
+    <string name="empty">--</string>
+
+
+    <!--Equipment List Item-->
+    <string name="et_equipment_name">Equipment name</string>
+    <string name="tv_equipment_code">Code</string>
+    <string name="tv_equipment_code_empty">Equipment code</string>
+    <string name="tv_equipment_type">Type</string>
+    <string name="tv_equipment_type_empty">Equipment type</string>
+
+
+    <!--Notification List Item-->
+    <string name="notification_name">Notification name</string>
+    <string name="notification_params">Notification params</string>
+</resources>
