@@ -80,7 +80,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_login_activity);
-        toolbar.setTitle(getString(R.string.login));
+        toolbar.setTitle(getString(R.string.title_activity_login));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
 
         if (ClientConfig.FIRST_STARTUP) {

@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,12 +27,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class NetworksActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class NetworksActivity extends BaseActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = NetworksActivity.class.getSimpleName();
-
     private static final int TAG_GET_NETWORKS = getTagId(GetNetworksCommand.class);
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ListView networksListView;
 
     private ProgressBar progressBar;
@@ -42,8 +43,32 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         L.d(TAG, "onCreate()");
         setContentView(R.layout.activity_networks);
 
+        setupToolbar();
+
+        setupViews();
+    }
+
+    private void setupViews() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar_network_activity);
+        progressBar.getIndeterminateDrawable().setColorFilter(
+                getResources().getColor(R.color.accent),
+                android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_networks);
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.red,
+                R.color.pink,
+                R.color.violet,
+                R.color.violet_dark);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        networksListView = (ListView) findViewById(R.id.lv_networks);
+        networksListView.setOnItemClickListener(this);
+    }
+
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_networks_activity);
-        toolbar.setTitle("Networks");
+        toolbar.setTitle(getString(R.string.title_activity_networks));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -52,11 +77,6 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
                 onBackPressed();
             }
         });
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar_network_activity);
-
-        networksListView = (ListView) findViewById(R.id.lv_networks);
-        networksListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -79,12 +99,6 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
                 startNetworksRequest();
             }
         }, 10);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        L.d(TAG, "onStop()");
     }
 
     private void startNetworksRequest() {
@@ -130,6 +144,7 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
                         });
                         networksListView.setAdapter(new NetworksAdapter(this, networks));
                         progressBar.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
                 break;
@@ -165,5 +180,16 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         Intent networkDevicesActivity = new Intent(getApplicationContext(), NetworkDevicesActivity.class);
         networkDevicesActivity.putExtra(NetworkDevicesActivity.EXTRA_NETWORK, network);
         startActivity(networkDevicesActivity);
+    }
+
+    @Override
+    public void onRefresh() {
+        //networksListView.setAdapter(null);
+        networksListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startNetworksRequest();
+            }
+        }, 10);
     }
 }

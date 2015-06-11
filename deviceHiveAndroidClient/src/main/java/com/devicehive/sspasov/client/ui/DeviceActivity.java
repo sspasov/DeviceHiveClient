@@ -107,16 +107,16 @@ public class DeviceActivity extends BaseActivity implements
         int color;
         switch (pos) {
             case 0:
-                color = getResources().getColor(R.color.info_strip);
+                color = getResources().getColor(R.color.red);
                 break;
             case 1:
-                color = getResources().getColor(R.color.equipment_strip);
+                color = getResources().getColor(R.color.pink);
                 break;
             case 2:
-                color = getResources().getColor(R.color.commands_strip);
+                color = getResources().getColor(R.color.violet);
                 break;
             default:
-                color = getResources().getColor(R.color.notifications_strip);
+                color = getResources().getColor(R.color.violet_dark);
                 break;
         }
         return color;

@@ -24,7 +24,7 @@
         <activity
             android:name="com.devicehive.sspasov.client.ui.StartupConfigurationActivity"
             android:configChanges="orientation"
-            android:label="@string/startup_configuration"
+            android:label="@string/title_activity_startup_configuration"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
@@ -44,31 +44,36 @@
         <activity
             android:name="com.devicehive.sspasov.client.ui.NetworksActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
             android:name="com.devicehive.sspasov.client.ui.NetworkDevicesActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
             android:name="com.devicehive.sspasov.client.ui.DeviceActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
             android:name="com.devicehive.sspasov.client.ui.SettingsActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_settings"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="sensorPortrait"
+            android:windowSoftInputMode="adjustPan">
         </activity>
 
         <service
             android:name="com.dataart.android.devicehive.network.DeviceHiveApiService"
-            android:exported="false"/>
+            android:exported="false">
+        </service>
 
     </application>
 

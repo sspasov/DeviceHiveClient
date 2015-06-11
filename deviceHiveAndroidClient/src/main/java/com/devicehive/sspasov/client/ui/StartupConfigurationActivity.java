@@ -33,25 +33,34 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
         setContentView(R.layout.activity_startup_configuration);
         L.d(TAG, "onCreate()");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_startup_activity);
-        toolbar.setTitle(getString(R.string.startup_configuration));
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-
-        etApiEndpoint = (EditText) findViewById(R.id.et_startup_api_endpoint);
-
-        btnContinue = (FloatingActionButton) findViewById(R.id.btn_startup_continue);
-        btnContinue.setOnClickListener(this);
-
         prefs = new ClientPreferences(this);
 
-        if (getIntent() != null && getIntent().hasExtra(API)) {
-            etApiEndpoint.setText(getIntent().getStringExtra(API));
-        }
+        setupToolbar();
+
+        setupViews();
 
         //TODO: DEBUG ONLY
         if (L.isUsingDebugData()) {
             etApiEndpoint.setText("http://nn8170.pg.devicehive.com/api");
         }
+    }
+
+    private void setupViews() {
+        etApiEndpoint = (EditText) findViewById(R.id.et_startup_api_endpoint);
+
+        btnContinue = (FloatingActionButton) findViewById(R.id.btn_startup_continue);
+        btnContinue.setOnClickListener(this);
+
+
+        if (getIntent() != null && getIntent().hasExtra(API)) {
+            etApiEndpoint.setText(getIntent().getStringExtra(API));
+        }
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_startup_activity);
+        toolbar.setTitle(getString(R.string.title_activity_startup_configuration));
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
     }
 
     @Override

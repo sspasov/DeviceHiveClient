@@ -10,8 +10,12 @@
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
 
-    <color name="info_strip">#F44336</color>
-    <color name="equipment_strip">#E91E63</color>
-    <color name="commands_strip">#9C27B0</color>
-    <color name="notifications_strip">#673AB7</color>
+    <color name="red">#F44336</color>
+    <color name="pink">#E91E63</color>
+    <color name="violet">#9C27B0</color>
+    <color name="violet_dark">#673AB7</color>
+
+    <color name="green_light">#CCFF90</color>
+    <color name="red_light">#FF8A80</color>
+
 </resources>

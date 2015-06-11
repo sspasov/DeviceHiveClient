@@ -2,6 +2,7 @@ package com.devicehive.sspasov.client.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -22,16 +23,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class NetworkDevicesActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class NetworkDevicesActivity extends BaseActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = NetworkDevicesActivity.class.getSimpleName();
 
     private static final int TAG_GET_NETWORK_DEVICES = getTagId(GetNetworkDevicesCommand.class);
-    public static final String EXTRA_NETWORK = "EXTRA_NETWORK";
+    public static final String EXTRA_NETWORK = "extra_network";
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ListView networkDevicesListView;
-    private ProgressBar progressBar;
     private Network network;
+
+    private ProgressBar progressBar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,30 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
             throw new IllegalArgumentException("Network extra should be provided");
         }
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar_network_devices_activity);
+        setupToolbar();
 
+        setupViews();
+    }
+
+    private void setupViews() {
+        progressBar = (ProgressBar) findViewById(R.id.progressBar_network_devices_activity);
+        progressBar.getIndeterminateDrawable().setColorFilter(
+                getResources().getColor(R.color.accent),
+                android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.srl_activity_network_devices);
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.red,
+                R.color.pink,
+                R.color.violet,
+                R.color.violet_dark);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        networkDevicesListView = (ListView) findViewById(R.id.lv_network_devices);
+        networkDevicesListView.setOnItemClickListener(this);
+    }
+
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_network_devices_activity);
         toolbar.setTitle(network.getName());
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
@@ -57,9 +82,6 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
                 onBackPressed();
             }
         });
-
-        networkDevicesListView = (ListView) findViewById(R.id.lv_network_devices);
-        networkDevicesListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -117,6 +139,7 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
                         });
                         networkDevicesListView.setAdapter(new NetworkDevicesAdapter(this, devices));
                         progressBar.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
                 break;
@@ -132,5 +155,17 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
         deviceActivity.putExtra(DeviceActivity.EXTRA_DEVICE, device);
         startActivity(deviceActivity);
         finish();
+    }
+
+    @Override
+    public void onRefresh() {
+        //networkDevicesListView.setAdapter(null);
+        networkDevicesListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startNetworkDevicesRequest();
+            }
+        }, 10);
+
     }
 }

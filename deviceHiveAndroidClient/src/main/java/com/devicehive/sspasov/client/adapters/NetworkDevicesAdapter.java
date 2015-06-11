@@ -19,10 +19,12 @@ public class NetworkDevicesAdapter extends BaseAdapter {
 
     private final LayoutInflater mInflater;
     private final List<DeviceData> mDeviceDataList;
+    private Context mContext;
 
     public NetworkDevicesAdapter(Context context, List<DeviceData> devices) {
         this.mDeviceDataList = devices;
         this.mInflater = LayoutInflater.from(context);
+        this.mContext = context;
     }
 
     @Override
@@ -57,6 +59,13 @@ public class NetworkDevicesAdapter extends BaseAdapter {
         holder.name.setText(device.getName());
         holder.description.setText(device.getDeviceClass()
                 .getName());
+
+        if (device.getStatus().contains("Offline")) {
+            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.red_light));
+        } else {
+            convertView.setBackgroundColor(mContext.getResources().getColor(R.color.green_light));
+        }
+
         return convertView;
     }
 

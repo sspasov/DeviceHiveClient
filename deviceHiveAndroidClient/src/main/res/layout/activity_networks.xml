@@ -7,12 +7,19 @@
         android:id="@+id/toolbar_networks_activity"
         layout="@layout/toolbar"/>
 
-    <ListView
-        android:id="@+id/lv_networks"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl_activity_networks"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/toolbar_networks_activity">
-    </ListView>
+
+        <ListView
+            android:id="@+id/lv_networks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </ListView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <ProgressBar
         android:id="@+id/progressBar_network_activity"
