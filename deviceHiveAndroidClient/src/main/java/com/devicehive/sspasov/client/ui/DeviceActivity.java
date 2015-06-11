@@ -78,8 +78,9 @@ public class DeviceActivity extends BaseActivity implements
 
         equipmentListFragment = EquipmentListFragment.newInstance();
 
-        deviceNotificationsFragment = new DeviceNotificationsFragment();
-        deviceSendCommandFragment = new DeviceSendCommandFragment();
+        deviceNotificationsFragment = DeviceNotificationsFragment.newInstance();
+
+        deviceSendCommandFragment = DeviceSendCommandFragment.newInstance();
         deviceSendCommandFragment.setParameterProvider(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

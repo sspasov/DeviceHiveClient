@@ -97,4 +97,20 @@ public class ClientPreferences {
         editor.putBoolean(KEY_ASYNC_NOTIFICATIONS, asyncNotifications);
         editor.apply();
     }
+
+
+    /**
+     * preference for remembering user password
+     */
+    private final static String KEY_REMEMBER_PASSWORD = NAMESPACE.concat("KEY_REMEMBER_PASSWORD");
+
+    public boolean getRememberPassword() {
+        return preferences.getBoolean(KEY_REMEMBER_PASSWORD, DeviceHiveConfig.DEFAULT_REMEMBER_PASSWORD);
+    }
+
+    public void setRememberPassword(boolean asyncNotifications) {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(KEY_REMEMBER_PASSWORD, asyncNotifications);
+        editor.apply();
+    }
 }

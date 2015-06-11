@@ -29,11 +29,11 @@ public class DeviceNotificationsFragment extends ListFragment {
     public void setNotifications(List<Notification> notifications) {
         L.d(TAG, "setNotifications()");
         this.mNotifications = notifications;
-
-        //TODO: crash
-        mNotificationsAdapter = new NotificationsAdapter(getActivity().getApplicationContext(), mNotifications);
-        mNotificationsAdapter.notifyDataSetChanged();
-        setListAdapter(mNotificationsAdapter);
+        if (getActivity() != null) {
+            mNotificationsAdapter = new NotificationsAdapter(getActivity(), mNotifications);
+            mNotificationsAdapter.notifyDataSetChanged();
+            setListAdapter(mNotificationsAdapter);
+        }
     }
 
     @Override

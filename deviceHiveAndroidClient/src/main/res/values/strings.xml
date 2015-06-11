@@ -13,11 +13,20 @@
 
 
     <!--Startup Configuration Activity-->
+    <string name="startup_configuration">Startup Configuration</string>
     <string name="welcome">Welcome to DeviceHive</string>
     <string name="client">Client</string>
     <string name="api_endpoint">API Endpoint</string>
     <string name="logo_content_description">logo</string>
     <string name="empty_api_endpoint">You must enter server URL.</string>
+    <string name="invalid_url">Invalid URL</string>
+
+    <!--Login Activity-->
+    <string name="login">Login</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="remember_password">Remember password</string>
+    <string name="required">Required</string>
 
     <!--Simple Pager Adapter -->
     <string name="tab_device_info">Info</string>
@@ -56,4 +65,6 @@
     <!--Notification List Item-->
     <string name="notification_name">Notification name</string>
     <string name="notification_params">Notification params</string>
+
+
 </resources>

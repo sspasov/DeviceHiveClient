@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.config.ClientPreferences;
+import com.devicehive.sspasov.client.utils.APIValidator;
 import com.devicehive.sspasov.client.utils.L;
 import com.github.clans.fab.FloatingActionButton;
 
@@ -17,7 +18,7 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
 
     private static final String TAG = StartupConfigurationActivity.class.getSimpleName();
 
-    public static final String API = "API";
+    public static final String API = "api";
 
     private EditText etApiEndpoint;
     private FloatingActionButton btnContinue;
@@ -33,9 +34,8 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
         L.d(TAG, "onCreate()");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_startup_activity);
-        toolbar.setTitle("Startup Configuration");
+        toolbar.setTitle(getString(R.string.startup_configuration));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_launcher);
 
         etApiEndpoint = (EditText) findViewById(R.id.et_startup_api_endpoint);
 
@@ -69,14 +69,16 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
         }
 
         if (!isEmpty) {
+            if (APIValidator.validate(etApiEndpoint.getText().toString())) {
+                prefs.setServerUrlSync(etApiEndpoint.getText().toString());
+                ClientConfig.API_ENDPOINT = prefs.getServerUrl();
 
-            prefs.setServerUrlSync(etApiEndpoint.getText()
-                    .toString());
-            ClientConfig.API_ENDPOINT = prefs.getServerUrl();
-
-            Intent loginActivity = new Intent(this, LoginActivity.class);
-            startActivity(loginActivity);
-            finish();
+                Intent loginActivity = new Intent(this, LoginActivity.class);
+                startActivity(loginActivity);
+                finish();
+            } else {
+                etApiEndpoint.setError(getString(R.string.invalid_url));
+            }
         }
     }
 }

@@ -17,5 +17,6 @@ public final class DeviceHiveConfig {
      * Optional
      */
     public static final boolean DEFAULT_ASYNC_NOTIFICATIONS = false;
+    public static final boolean DEFAULT_REMEMBER_PASSWORD = false;
 
 }

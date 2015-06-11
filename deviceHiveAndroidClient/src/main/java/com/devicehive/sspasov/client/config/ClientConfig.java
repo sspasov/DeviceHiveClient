@@ -12,4 +12,6 @@ public class ClientConfig {
     public static String PASSWORD;
 
     public static boolean ASYNC_NOTIFICATIONS;
+    public static boolean REMEMBER_PASSWORD;
+
 }

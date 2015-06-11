@@ -86,6 +86,10 @@ public class SampleClientApplication extends Application {
 
         L.d(TAG, "ClientPref device async notifications: " + prefs.getAsyncNotifications());
         ClientConfig.ASYNC_NOTIFICATIONS = prefs.getAsyncNotifications();
+
+
+        L.d(TAG, "ClientPref remember password: " + prefs.getRememberPassword());
+        ClientConfig.REMEMBER_PASSWORD = prefs.getRememberPassword();
     }
 
 }

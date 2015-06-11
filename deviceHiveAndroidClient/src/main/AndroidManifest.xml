@@ -24,6 +24,7 @@
         <activity
             android:name="com.devicehive.sspasov.client.ui.StartupConfigurationActivity"
             android:configChanges="orientation"
+            android:label="@string/startup_configuration"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
