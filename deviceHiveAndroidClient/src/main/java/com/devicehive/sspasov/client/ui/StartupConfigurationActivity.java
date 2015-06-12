@@ -1,8 +1,8 @@
 package com.devicehive.sspasov.client.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
@@ -14,12 +14,17 @@ import com.devicehive.sspasov.client.utils.APIValidator;
 import com.devicehive.sspasov.client.utils.L;
 import com.github.clans.fab.FloatingActionButton;
 
-public class StartupConfigurationActivity extends Activity implements View.OnClickListener {
-
+public class StartupConfigurationActivity extends AppCompatActivity implements View.OnClickListener {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = StartupConfigurationActivity.class.getSimpleName();
-
     public static final String API = "api";
 
+
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private EditText etApiEndpoint;
     private FloatingActionButton btnContinue;
 
@@ -27,6 +32,9 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
 
     private boolean isEmpty;
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +52,10 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
             etApiEndpoint.setText("http://nn8170.pg.devicehive.com/api");
         }
     }
+
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
 
     private void setupViews() {
         etApiEndpoint = (EditText) findViewById(R.id.et_startup_api_endpoint);
@@ -63,6 +75,9 @@ public class StartupConfigurationActivity extends Activity implements View.OnCli
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onClick(View v) {
         L.d(TAG, "onClick()");

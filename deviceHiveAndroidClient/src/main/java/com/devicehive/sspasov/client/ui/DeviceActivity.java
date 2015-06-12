@@ -1,5 +1,6 @@
 package com.devicehive.sspasov.client.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -34,14 +35,19 @@ public class DeviceActivity extends BaseActivity implements
         SampleDeviceClient.NotificationsListener, SampleDeviceClient.CommandListener,
         DeviceSendCommandFragment.CommandSender, DeviceSendCommandFragment.ParameterProvider,
         ParameterDialog.ParameterDialogListener {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = DeviceActivity.class.getSimpleName();
     private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
     private final static int TAG_GET_EQUIPMENT = getTagId(GetDeviceClassEquipmentCommand.class);
     private final static int TAG_GET_EQUIPMENT_STATE = getTagId(GetDeviceEquipmentStateCommand.class);
 
-    public static final String EXTRA_DEVICE = "EXTRA_DEVICE";
+    public static final String EXTRA_DEVICE = "extra_device";
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private SampleClientApplication app;
     private DeviceData device;
     private SampleDeviceClient deviceClient;
@@ -57,6 +63,9 @@ public class DeviceActivity extends BaseActivity implements
     private List<EquipmentData> equipment = new LinkedList<>();
     private List<EquipmentState> equipmentState = new LinkedList<>();
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,10 +93,10 @@ public class DeviceActivity extends BaseActivity implements
         deviceSendCommandFragment.setParameterProvider(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(device.getName());
+        toolbar.setTitle(device.getName());
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        getSupportActionBar().setIcon(getResources().getDrawable(R.drawable.ic_launcher));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SimplePagerAdapter(this, getSupportFragmentManager()));
@@ -103,25 +112,6 @@ public class DeviceActivity extends BaseActivity implements
         });
     }
 
-    private int getColorBasedForPosition(int pos) {
-        int color;
-        switch (pos) {
-            case 0:
-                color = getResources().getColor(R.color.red);
-                break;
-            case 1:
-                color = getResources().getColor(R.color.pink);
-                break;
-            case 2:
-                color = getResources().getColor(R.color.violet);
-                break;
-            default:
-                color = getResources().getColor(R.color.violet_dark);
-                break;
-        }
-        return color;
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -131,7 +121,7 @@ public class DeviceActivity extends BaseActivity implements
         viewPager.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startEquipmentRequest();
+                startRequest();
             }
         }, 10);
     }
@@ -154,6 +144,31 @@ public class DeviceActivity extends BaseActivity implements
         L.d(TAG, "onStop()");
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
+    private int getColorBasedForPosition(int pos) {
+        int color;
+        switch (pos) {
+            case 0:
+                color = getResources().getColor(R.color.red);
+                break;
+            case 1:
+                color = getResources().getColor(R.color.pink);
+                break;
+            case 2:
+                color = getResources().getColor(R.color.violet);
+                break;
+            default:
+                color = getResources().getColor(R.color.violet_dark);
+                break;
+        }
+        return color;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onReceivesNotification(Notification notification) {
         L.d(TAG, "onReceivesNotification()");
@@ -167,7 +182,8 @@ public class DeviceActivity extends BaseActivity implements
         deviceClient.sendCommand(command);
     }
 
-    private void startEquipmentRequest() {
+    @Override
+    protected void startRequest() {
         L.d(TAG, "startEquipmentRequest()");
         startCommand(new GetDeviceClassEquipmentCommand(deviceClient.getDevice()
                 .getDeviceClass()
@@ -187,7 +203,7 @@ public class DeviceActivity extends BaseActivity implements
                     showErrorDialog("Failed to retrieve device data");
                 } else if (tagId == TAG_GET_EQUIPMENT) {
                     // retry
-                    startEquipmentRequest();
+                    startRequest();
                 } else if (tagId == TAG_GET_EQUIPMENT_STATE) {
                     // retry
                     startCommand(new GetDeviceEquipmentStateCommand(deviceClient.getDevice()
@@ -249,5 +265,13 @@ public class DeviceActivity extends BaseActivity implements
         if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(value)) {
             deviceSendCommandFragment.addParameter(name, value);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent networkDevicesActivity = new Intent(this, NetworkDevicesActivity.class);
+        networkDevicesActivity.putExtra(NetworkDevicesActivity.EXTRA_NETWORK, device.getNetwork());
+        startActivity(networkDevicesActivity);
+        finish();
     }
 }

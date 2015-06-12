@@ -28,15 +28,23 @@ import java.util.Comparator;
 import java.util.List;
 
 public class NetworksActivity extends BaseActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = NetworksActivity.class.getSimpleName();
     private static final int TAG_GET_NETWORKS = getTagId(GetNetworksCommand.class);
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView networksListView;
 
     private ProgressBar progressBar;
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +56,29 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         setupViews();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.d(TAG, "onResume()");
+        L.d(TAG, "Starting Get Networks request");
+        progressBar.setVisibility(View.VISIBLE);
+        networksListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startRequest();
+            }
+        }, 10);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        L.d(TAG, "onStop()");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
     private void setupViews() {
         progressBar = (ProgressBar) findViewById(R.id.progressBar_network_activity);
         progressBar.getIndeterminateDrawable().setColorFilter(
@@ -71,37 +102,14 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         toolbar.setTitle(getString(R.string.title_activity_networks));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        setSupportActionBar(toolbar);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
-    public void onBackPressed() {
-        Intent loginActivity = new Intent(this, LoginActivity.class);
-        loginActivity.putExtra(LoginActivity.USERNAME, ClientConfig.USERNAME);
-        startActivity(loginActivity);
-        finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        L.d(TAG, "onResume()");
-        L.d(TAG, "Starting Get Networks request");
-        progressBar.setVisibility(View.VISIBLE);
-        networksListView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startNetworksRequest();
-            }
-        }, 10);
-    }
-
-    private void startNetworksRequest() {
+    protected void startRequest() {
         L.d(TAG, "startNetworksRequest()");
         startCommand(new GetNetworksCommand());
     }
@@ -151,6 +159,14 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent loginActivity = new Intent(this, LoginActivity.class);
+        loginActivity.putExtra(LoginActivity.USERNAME, ClientConfig.USERNAME);
+        startActivity(loginActivity);
+        finish();
+    }
+
     private void showSettingsDialog(String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final AlertDialog dialog = builder.setTitle(title)
@@ -180,15 +196,15 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         Intent networkDevicesActivity = new Intent(getApplicationContext(), NetworkDevicesActivity.class);
         networkDevicesActivity.putExtra(NetworkDevicesActivity.EXTRA_NETWORK, network);
         startActivity(networkDevicesActivity);
+        finish();
     }
 
     @Override
     public void onRefresh() {
-        //networksListView.setAdapter(null);
         networksListView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startNetworksRequest();
+                startRequest();
             }
         }, 10);
     }

@@ -24,18 +24,26 @@ import java.util.Comparator;
 import java.util.List;
 
 public class NetworkDevicesActivity extends BaseActivity implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = NetworkDevicesActivity.class.getSimpleName();
 
     private static final int TAG_GET_NETWORK_DEVICES = getTagId(GetNetworkDevicesCommand.class);
     public static final String EXTRA_NETWORK = "extra_network";
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView networkDevicesListView;
     private Network network;
 
     private ProgressBar progressBar;
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +61,29 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
         setupViews();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        L.d(TAG, "onResume()");
+        Log.d(TAG, "Starting Fetch Network devices request");
+        progressBar.setVisibility(View.VISIBLE);
+        networkDevicesListView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startRequest();
+            }
+        }, 10);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        L.d(TAG, "onStop()");
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
     private void setupViews() {
         progressBar = (ProgressBar) findViewById(R.id.progressBar_network_devices_activity);
         progressBar.getIndeterminateDrawable().setColorFilter(
@@ -76,36 +107,14 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
         toolbar.setTitle(network.getName());
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        setSupportActionBar(toolbar);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
-    public void onBackPressed() {
-        Intent networksActivity = new Intent(this, NetworksActivity.class);
-        startActivity(networksActivity);
-        finish();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        L.d(TAG, "onResume()");
-        Log.d(TAG, "Starting Fetch Network devices request");
-        progressBar.setVisibility(View.VISIBLE);
-        networkDevicesListView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startNetworkDevicesRequest();
-            }
-        }, 10);
-    }
-
-    private void startNetworkDevicesRequest() {
+    protected void startRequest() {
         L.d(TAG, "startNetworkDevicesRequest()");
         startCommand(new GetNetworkDevicesCommand(network.getId()));
     }
@@ -158,14 +167,19 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
     }
 
     @Override
+    public void onBackPressed() {
+        Intent networksActivity = new Intent(this, NetworksActivity.class);
+        startActivity(networksActivity);
+        finish();
+    }
+
+    @Override
     public void onRefresh() {
-        //networkDevicesListView.setAdapter(null);
         networkDevicesListView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startNetworkDevicesRequest();
+                startRequest();
             }
         }, 10);
-
     }
 }

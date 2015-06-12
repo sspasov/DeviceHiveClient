@@ -4,21 +4,25 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
 import com.devicehive.sspasov.client.BuildConfig;
+import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.config.ClientConfig;
 
 public class BaseActivity extends AppCompatActivity {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
 
-    /*private final static String NAMESPACE = BaseActivity.class.getName();
 
-    private final static String EXTRA_PARENT_ACTIVITY = NAMESPACE.concat(".EXTRA_PARENT_ACTIVITY");
-
-    private final static String EXTRA_PARENT_ACTIVITY_EXTRAS =
-        NAMESPACE.concat(".EXTRA_PARENT_ACTIVITY_EXTRAS");*/
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
 
     private DeviceHiveResultReceiver resultReceiver = null;
 
@@ -30,6 +34,9 @@ public class BaseActivity extends AppCompatActivity {
                 }
             };
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +49,14 @@ public class BaseActivity extends AppCompatActivity {
             resultReceiver.detachResultListener();
             resultReceiver = null;
         }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------------------------------------
+
+    protected void startRequest() {
+
     }
 
     protected final <T extends NetworkCommand> void startCommand(final T command) {
@@ -57,22 +72,16 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected NetworkCommandConfig getNetworkCommandConfig() {
-
-        /*final ClientPreferences prefs = new ClientPreferences(this);
-        String serverUrl = prefs.getServerUrl();
-        if (serverUrl == null) {
-            serverUrl = DeviceHiveConfig.API_ENDPOINT;
-            prefs.setServerUrlSync(serverUrl);
-        }*/
-        final NetworkCommandConfig config =
-                new NetworkCommandConfig(ClientConfig.API_ENDPOINT, getResultReceiver(), BuildConfig.DEBUG);
+        final NetworkCommandConfig config = new NetworkCommandConfig(
+                ClientConfig.API_ENDPOINT,
+                getResultReceiver(),
+                BuildConfig.DEBUG);
 
         config.setBasicAuthorisation(ClientConfig.USERNAME, ClientConfig.PASSWORD);
         return config;
     }
 
     protected void onReceiveResult(final int resultCode, final int tagId, final Bundle resultData) {
-
     }
 
     protected static final int getTagId(final Class<?> tag) {
@@ -82,20 +91,6 @@ public class BaseActivity extends AppCompatActivity {
     protected static final int getTagId(final String tag) {
         return DeviceHiveResultReceiver.getIdForTag(tag);
     }
-
-    /*protected final static <T extends Activity> Intent setParentActivity(final Intent intent,
-        final Class<T> parentActivityClass) {
-        return setParentActivity(intent, parentActivityClass, null);
-    }
-
-    protected final static <T extends Activity> Intent setParentActivity(final Intent intent,
-        final Class<T> parentActivityClass, Bundle parentActivityExtras) {
-        intent.putExtra(EXTRA_PARENT_ACTIVITY, parentActivityClass.getName());
-        if (parentActivityExtras != null) {
-            intent.putExtra(EXTRA_PARENT_ACTIVITY_EXTRAS, parentActivityExtras);
-        }
-        return intent;
-    }*/
 
     protected void showErrorDialog(String message) {
         showDialog("Error!", message);
@@ -115,4 +110,25 @@ public class BaseActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.menu_settings:
+                //TODO: go to settings
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

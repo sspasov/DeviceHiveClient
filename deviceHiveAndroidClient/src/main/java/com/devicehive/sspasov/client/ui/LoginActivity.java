@@ -1,8 +1,8 @@
 package com.devicehive.sspasov.client.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -15,12 +15,16 @@ import com.devicehive.sspasov.client.config.ClientPreferences;
 import com.devicehive.sspasov.client.utils.L;
 import com.github.clans.fab.FloatingActionButton;
 
-public class LoginActivity extends Activity implements View.OnClickListener {
-
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = LoginActivity.class.getSimpleName();
-
     public static final String USERNAME = "username";
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private EditText etUsername;
     private EditText etPassword;
     private CheckBox cbPassword;
@@ -30,6 +34,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private ClientPreferences prefs;
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +57,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------------------------------------
     private void firstStartup() {
         if (ClientConfig.FIRST_STARTUP && (ClientConfig.API_ENDPOINT == null)) {
             Intent startupActivity = new Intent(this, StartupConfigurationActivity.class);
@@ -94,6 +104,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onBackPressed() {
         L.d(TAG, "onBackPressed()");
