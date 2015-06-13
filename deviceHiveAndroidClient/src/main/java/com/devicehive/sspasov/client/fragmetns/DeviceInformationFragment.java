@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -23,8 +22,14 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class DeviceInformationFragment extends Fragment {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = DeviceInformationFragment.class.getSimpleName();
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private DeviceData mDeviceData;
 
     private TextView tvDeviceName;
@@ -45,8 +50,72 @@ public class DeviceInformationFragment extends Fragment {
 
     private Context mContext;
 
+    // ---------------------------------------------------------------------------------------------
+    // Fragment life cycle
+    // ---------------------------------------------------------------------------------------------
+    @Override
+    public void onResume() {
+        super.onResume();
+        L.d(TAG, "onResume()");
+        setupDeviceData(mDeviceData);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        L.d(TAG, "onCreateView()");
+        View rootView = inflater.inflate(R.layout.fragment_device_info, container, false);
+
+        tvDeviceName = (TextView) rootView.findViewById(R.id.tv_device_name);
+        //tvDeviceBoard = (TextView) rootView.findViewById(R.id.tv_device_board);
+        tvDeviceId = (TextView) rootView.findViewById(R.id.tv_device_id);
+        tvDeviceStatus = (TextView) rootView.findViewById(R.id.tv_device_status);
+        //tvDeviceTimeOn = (TextView) rootView.findViewById(R.id.tv_device_time_on);
+        //tvDeviceBattery = (TextView) rootView.findViewById(R.id.tv_device_battery);
+
+        tvDeviceClassName = (TextView) rootView.findViewById(R.id.tv_device_class_name);
+        tvDeviceClassVersion = (TextView) rootView.findViewById(R.id.tv_device_class_version);
+        tvDeviceClassIsPermanent =
+                (TextView) rootView.findViewById(R.id.tv_device_class_is_permanent);
+
+        tvDeviceNetworkName = (TextView) rootView.findViewById(R.id.tv_device_network_name);
+        tvDeviceNetworkDescription =
+                (TextView) rootView.findViewById(R.id.tv_device_network_description);
+
+        return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mDeviceData = null;
+
+        tvDeviceName = null;
+        tvDeviceBoard = null;
+        tvDeviceId = null;
+        tvDeviceStatus = null;
+        tvDeviceTimeOn = null;
+        tvDeviceBattery = null;
+
+        tvDeviceClassName = null;
+        tvDeviceClassVersion = null;
+        tvDeviceClassIsPermanent = null;
+
+        tvDeviceNetworkName = null;
+        tvDeviceNetworkDescription = null;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public static DeviceInformationFragment newInstance() {
         L.d(TAG, "newInstance()");
+        mInstance = new DeviceInformationFragment();
+        return mInstance;
+    }
+
+    public static DeviceInformationFragment getInstance() {
+        L.d(TAG, "getInstance()");
         if (mInstance == null) {
             mInstance = new DeviceInformationFragment();
         }
@@ -66,43 +135,14 @@ public class DeviceInformationFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        L.d(TAG, "onResume()");
-        setupDeviceData(mDeviceData);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        L.d(TAG, "onCreateView()");
-        View rootView = inflater.inflate(R.layout.fragment_device_info, container, false);
-
-        tvDeviceName = (TextView) rootView.findViewById(R.id.tv_device_name);
-        tvDeviceBoard = (TextView) rootView.findViewById(R.id.tv_device_board);
-        tvDeviceId = (TextView) rootView.findViewById(R.id.tv_device_id);
-        tvDeviceStatus = (TextView) rootView.findViewById(R.id.tv_device_status);
-        //tvDeviceTimeOn = (TextView) rootView.findViewById(R.id.tv_device_time_on);
-        //tvDeviceBattery = (TextView) rootView.findViewById(R.id.tv_device_battery);
-
-        tvDeviceClassName = (TextView) rootView.findViewById(R.id.tv_device_class_name);
-        tvDeviceClassVersion = (TextView) rootView.findViewById(R.id.tv_device_class_version);
-        tvDeviceClassIsPermanent =
-                (TextView) rootView.findViewById(R.id.tv_device_class_is_permanent);
-
-        tvDeviceNetworkName = (TextView) rootView.findViewById(R.id.tv_device_network_name);
-        tvDeviceNetworkDescription =
-                (TextView) rootView.findViewById(R.id.tv_device_network_description);
-
-        return rootView;
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
     private void setupDeviceData(DeviceData deviceData) {
         L.d(TAG, "setupDeviceData()");
         if (deviceData != null) {
             tvDeviceName.setText(deviceData.getName());
-            tvDeviceBoard.setText(Build.BOARD);
+            //tvDeviceBoard.setText(Build.BOARD);
             tvDeviceId.setText(deviceData.getId());
             tvDeviceStatus.setText(deviceData.getStatus());
             //timeThread();
@@ -169,4 +209,14 @@ public class DeviceInformationFragment extends Fragment {
             }
         }, 0, 60_000);
     }
+    // ---------------------------------------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
+
+
 }

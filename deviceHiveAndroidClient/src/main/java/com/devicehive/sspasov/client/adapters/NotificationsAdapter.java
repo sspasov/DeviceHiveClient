@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.dataart.android.devicehive.Notification;
 import com.devicehive.sspasov.client.R;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -23,11 +24,6 @@ public class NotificationsAdapter extends BaseAdapter {
     public NotificationsAdapter(Context context, List<Notification> notifications) {
         this.mNotifications = notifications;
         this.mInflater = LayoutInflater.from(context);
-    }
-
-    public void setNotifications(List<Notification> notifications) {
-        this.mNotifications = notifications;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -60,7 +56,20 @@ public class NotificationsAdapter extends BaseAdapter {
 
         final Notification notification = mNotifications.get(position);
         holder.name.setText(notification.getId() + ". " + notification.getName());
-        holder.params.setText(notification.getParameters().toString());
+
+        HashMap<String, String> params = (HashMap<String, String>) notification.getParameters();
+        String[] values = new String[3];
+        if (params.isEmpty()) {
+            holder.params.setText("(no parameters)");
+        } else if (params.containsKey("value")) {
+            values[0] = params.get("value");
+            holder.params.setText("value: " + values[0]);
+        } else {
+            values[0] = params.get("x");
+            values[1] = params.get("y");
+            values[2] = params.get("z");
+            holder.params.setText("x: " + values[0] + "\ny: " + values[1] + "\nz: " + values[2]);
+        }
 
         return convertView;
     }

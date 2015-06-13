@@ -50,16 +50,16 @@ public class SimplePagerAdapter extends FragmentStatePagerAdapter {
         switch (i) {
             case 0:
                 L.d(TAG, "DeviceInformationFragment.getInstance();");
-                return DeviceInformationFragment.newInstance();
+                return DeviceInformationFragment.getInstance();
             case 1:
                 L.d(TAG, "EquipmentListFragment.getInstance();");
-                return EquipmentListFragment.newInstance();
+                return EquipmentListFragment.getInstance();
             case 2:
                 L.d(TAG, "DeviceNotificationsFragment.getInstance();");
-                return DeviceNotificationsFragment.newInstance();
+                return DeviceNotificationsFragment.getInstance();
             default:
                 L.d(TAG, "DeviceSendCommandFragment.getInstance();");
-                return DeviceSendCommandFragment.newInstance();
+                return DeviceSendCommandFragment.getInstance();
         }
     }
 }

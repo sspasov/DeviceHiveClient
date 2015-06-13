@@ -1,7 +1,6 @@
 package com.devicehive.sspasov.client.fragmetns;
 
 import android.app.Activity;
-import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,59 +8,51 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.EquipmentData;
 import com.devicehive.sspasov.client.R;
+import com.devicehive.sspasov.client.adapters.ParametersAdapter;
+import com.devicehive.sspasov.client.objects.Parameter;
+import com.devicehive.sspasov.client.utils.L;
+import com.github.clans.fab.FloatingActionButton;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class DeviceSendCommandFragment extends Fragment {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
+    private static final String TAG = DeviceSendCommandFragment.class.getSimpleName();
 
-    private static final String TAG = "DeviceSendCommandFragment";
-
-    private Button sendCommandButton;
-
-    private TextView commandNameEdit;
-    private LinearLayout parametersContainer;
-
-    private Spinner equipmentSpinner;
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
+    private EditText etCommandName;
+    private Spinner spEquipment;
+    private ListView lvParameters;
+    private FloatingActionButton btnSendCommand;
 
     private CommandSender commandSender;
     private ParameterProvider parameterProvider;
     private ParametersAdapter parametersAdapter;
-
     private List<EquipmentData> equipment;
-    private List<CommandParameter> parameters = new LinkedList<CommandParameter>();
+    private List<Parameter> parameters = new LinkedList<Parameter>();
+    private String mDeviceStatus;
 
-    private static DeviceSendCommandFragment instance;
+    private static DeviceSendCommandFragment mInstance;
 
-    public static DeviceSendCommandFragment newInstance() {
-        if (instance == null) {
-            instance = new DeviceSendCommandFragment();
-        }
-        return instance;
-    }
-
-    public static class CommandParameter {
-        public final String name;
-        public final String value;
-
-        public CommandParameter(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Interfaces
+    // ---------------------------------------------------------------------------------------------
     public interface CommandSender {
         void sendCommand(Command command);
     }
@@ -70,82 +61,142 @@ public class DeviceSendCommandFragment extends Fragment {
         void queryParameter();
     }
 
-    public void setCommandSender(CommandSender commandSender) {
-        this.commandSender = commandSender;
-    }
-
-    public void setParameterProvider(ParameterProvider parameterProvider) {
-        this.parameterProvider = parameterProvider;
-    }
-
-    public void setEquipment(List<EquipmentData> equipment) {
-        this.equipment = equipment;
-        setupEquipmentSpinner(equipment);
-    }
-
-    public void addParameter(String name, String value) {
-        this.parameters.add(new CommandParameter(name, value));
-        setupParameters(this.parameters);
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Fragment life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        L.d(TAG, "onAttach()");
         commandSender = (CommandSender) activity;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        L.d(TAG, "onResume()");
         setupEquipmentSpinner(equipment);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-        Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_send_command, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        L.d(TAG, "onCreateView()");
+        View rootView = inflater.inflate(R.layout.fragment_send_command, container, false);
 
-        sendCommandButton = (Button) view.findViewById(R.id.send_command_button);
+        etCommandName = (EditText) rootView.findViewById(R.id.et_command_name);
 
-        commandNameEdit = (EditText) view.findViewById(R.id.command_name_edit);
+        spEquipment = (Spinner) rootView.findViewById(R.id.equipment_spinner);
+        spEquipment.setPrompt("Select equipment");
+        setupEquipmentSpinner(equipment);
 
-        parametersContainer = (LinearLayout) view.findViewById(R.id.parameters_container);
-
-        sendCommandButton.setOnClickListener(new View.OnClickListener() {
+        lvParameters = (ListView) rootView.findViewById(R.id.lv_parameters);
+        addParameter("Add extra parameter", "");
+        lvParameters.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                sendCommand();
-            }
-        });
-
-        final Button addParameterButton = (Button) view.findViewById(R.id.add_parameter_button);
-        addParameterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (parameterProvider != null) {
-                    parameterProvider.queryParameter();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    if (parameterProvider != null) {
+                        parameterProvider.queryParameter();
+                    }
                 }
             }
         });
+        lvParameters.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 0) {
+                    parametersAdapter.removeParameter(position);
+                    parametersAdapter.notifyDataSetChanged();
+                }
+                return false;
+            }
+        });
 
-        equipmentSpinner = (Spinner) view.findViewById(R.id.equipment_spinner);
-        equipmentSpinner.setPrompt("Select equipment");
-        setupEquipmentSpinner(equipment);
-        setupParameters(parameters);
-        return view;
+        btnSendCommand = (FloatingActionButton) rootView.findViewById(R.id.send_command_button);
+        btnSendCommand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!mDeviceStatus.contains("Offline")) {
+                    sendCommand();
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "Warning !!! Device is offline.", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+        return rootView;
     }
 
+    @Override
+    public void onDestroyView() {
+        L.d(TAG, "onDestroyView()");
+        btnSendCommand = null;
+        etCommandName = null;
+        spEquipment = null;
+        super.onDestroyView();
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
+    public static DeviceSendCommandFragment newInstance() {
+        L.d(TAG, "newInstance()");
+        mInstance = new DeviceSendCommandFragment();
+        return mInstance;
+    }
+
+    public static DeviceSendCommandFragment getInstance() {
+        L.d(TAG, "getInstance()");
+        if (mInstance == null) {
+            mInstance = new DeviceSendCommandFragment();
+        }
+        return mInstance;
+    }
+
+    public void setCommandSender(CommandSender commandSender) {
+        L.d(TAG, "setCommandSender()");
+        this.commandSender = commandSender;
+    }
+
+    public void setParameterProvider(ParameterProvider parameterProvider) {
+        L.d(TAG, "setParameterProvider()");
+        this.parameterProvider = parameterProvider;
+    }
+
+    public void setEquipment(List<EquipmentData> equipment) {
+        L.d(TAG, "setEquipment()");
+        this.equipment = equipment;
+        setupEquipmentSpinner(equipment);
+    }
+
+    public void setDeviceStatus(String deviceStatus) {
+        L.d(TAG, "setDeviceStatus()");
+        this.mDeviceStatus = deviceStatus;
+    }
+
+    public void addParameter(String name, String value) {
+        L.d(TAG, "addParameter()");
+        this.parameters.add(new Parameter(name, value));
+        setupParameters(this.parameters);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
     private void setupEquipmentSpinner(List<EquipmentData> equipment) {
-        if (equipment != null && equipmentSpinner != null) {
+        L.d(TAG, "setupEquipmentSpinner()");
+        if (equipment != null && spEquipment != null) {
             ArrayAdapter<String> adapter =
-                new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item,
-                    getEquipmentItems(equipment));
+                    new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item,
+                            getEquipmentItems(equipment));
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            equipmentSpinner.setAdapter(adapter);
+            spEquipment.setAdapter(adapter);
         }
     }
 
     private List<String> getEquipmentItems(List<EquipmentData> equipment) {
+        L.d(TAG, "getEquipmentItems()");
         final List<String> equipmentNames = new LinkedList<String>();
         equipmentNames.add("None");
         for (EquipmentData eq : equipment) {
@@ -154,8 +205,8 @@ public class DeviceSendCommandFragment extends Fragment {
         return equipmentNames;
     }
 
-    private void setupParameters(List<CommandParameter> parameters) {
-        parametersContainer.removeAllViews();
+    private void setupParameters(List<Parameter> parameters) {
+        L.d(TAG, "setupParameters()");
         parametersAdapter = new ParametersAdapter(getActivity(), parameters);
         parametersAdapter.registerDataSetObserver(new DataSetObserver() {
             @Override
@@ -164,110 +215,45 @@ public class DeviceSendCommandFragment extends Fragment {
                 setupParameters(DeviceSendCommandFragment.this.parameters);
             }
         });
-        final int count = parametersAdapter.getCount();
-        for (int i = 0; i < count; i++) {
-            parametersContainer.addView(parametersAdapter.getView(i, null, parametersContainer));
-        }
-    }
-
-    @Override
-    public void onDestroyView() {
-        sendCommandButton = null;
-        commandNameEdit = null;
-        equipmentSpinner = null;
-        super.onDestroyView();
+        lvParameters.setAdapter(parametersAdapter);
     }
 
     private void sendCommand() {
-        String command = commandNameEdit.getText()
-            .toString();
+        L.d(TAG, "sendCommand()");
+        String command = etCommandName.getText()
+                .toString();
         if (TextUtils.isEmpty(command)) {
             command = "TestCommandAndroidFramework";
         }
 
         HashMap<String, Object> parameters = paramsAsMap(this.parameters);
-        int selectedItemPosition = equipmentSpinner.getSelectedItemPosition();
+
+        int selectedItemPosition = spEquipment.getSelectedItemPosition();
         if (selectedItemPosition != 0) {
             final EquipmentData selectedEquipment = equipment.get(selectedItemPosition - 1);
             parameters.put("equipment", selectedEquipment.getCode());
         }
+
         if (commandSender != null) {
             commandSender.sendCommand(new Command(command, parameters));
         }
     }
 
-    private static HashMap<String, Object> paramsAsMap(List<CommandParameter> params) {
+    private static HashMap<String, Object> paramsAsMap(List<Parameter> params) {
+        L.d(TAG, "paramsAsMap()");
         HashMap<String, Object> paramsMap = new HashMap<String, Object>();
-        for (CommandParameter param : params) {
-            paramsMap.put(param.name, param.value);
+        for (int i = 1; i < params.size(); i++) {
+            paramsMap.put(params.get(i).name, params.get(i).value);
         }
         return paramsMap;
     }
 
-    private static class ParametersAdapter extends BaseAdapter {
+    // ---------------------------------------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------------------------------------
 
-        private final LayoutInflater inflater;
-        private final List<CommandParameter> parameters;
 
-        public ParametersAdapter(Context context, List<CommandParameter> parameters) {
-            this.parameters = parameters;
-            this.inflater = LayoutInflater.from(context);
-        }
-
-        public void removeParameter(CommandParameter parameter) {
-            parameters.remove(parameter);
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getCount() {
-            return parameters.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return parameters.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        private View.OnClickListener clickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                removeParameter((CommandParameter) v.getTag());
-            }
-        };
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
-            if (convertView == null) {
-                convertView = inflater.inflate(R.layout.parameters_list_item, null);
-                holder = new ViewHolder();
-                holder.name = (TextView) convertView.findViewById(R.id.parameter_name_text_view);
-                holder.value = (TextView) convertView.findViewById(R.id.parameter_value_text_view);
-                holder.deleteButton = convertView.findViewById(R.id.parameter_delete_image_view);
-                holder.deleteButton.setOnClickListener(clickListener);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            final CommandParameter parameter = parameters.get(position);
-            holder.name.setText(parameter.name);
-            holder.value.setText(parameter.value);
-            holder.deleteButton.setTag(parameter);
-            return convertView;
-        }
-
-        private class ViewHolder {
-            TextView name;
-            TextView value;
-            View deleteButton;
-        }
-
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
 }

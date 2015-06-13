@@ -7,6 +7,7 @@ import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.config.ClientPreferences;
 import com.devicehive.sspasov.client.config.DeviceHiveConfig;
 import com.devicehive.sspasov.client.objects.SampleDeviceClient;
+import com.devicehive.sspasov.client.utils.DeviceNotificationManager;
 import com.devicehive.sspasov.client.utils.L;
 
 public class SampleClientApplication extends Application {
@@ -20,6 +21,8 @@ public class SampleClientApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        DeviceNotificationManager.init();
 
         L.useDebugMode(true);
         L.useDebugData(true);

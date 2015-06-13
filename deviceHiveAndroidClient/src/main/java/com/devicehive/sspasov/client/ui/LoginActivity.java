@@ -52,8 +52,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setupViews();
 
         if (L.isUsingDebugData()) {
-            etUsername.setText("admin");
-            etPassword.setText("milena92");
+            etUsername.setText("testUser");
+            etPassword.setText("testUser");
         }
     }
 

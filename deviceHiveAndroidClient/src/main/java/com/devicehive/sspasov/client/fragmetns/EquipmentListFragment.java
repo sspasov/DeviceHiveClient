@@ -11,21 +11,58 @@ import com.devicehive.sspasov.client.utils.L;
 import java.util.List;
 
 public class EquipmentListFragment extends ListFragment {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static String TAG = EquipmentListFragment.class.getSimpleName();
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private List<EquipmentData> equipment;
     private List<EquipmentState> equipmentState;
     private EquipmentAdapter equipmentAdapter;
 
-    private static EquipmentListFragment instance;
+    private static EquipmentListFragment mInstance;
 
+    // ---------------------------------------------------------------------------------------------
+    // Fragment life cycle
+    // ---------------------------------------------------------------------------------------------
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        L.d(TAG, "onAttach()");
+        if (equipment != null) {
+            equipmentAdapter = new EquipmentAdapter(activity, equipment, equipmentState);
+            setListAdapter(equipmentAdapter);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        L.d(TAG, "onDestroyView()");
+        equipment = null;
+        equipmentState = null;
+        equipmentAdapter = null;
+    }
+
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public static EquipmentListFragment newInstance() {
         L.d(TAG, "newInstance()");
-        if (instance == null) {
-            instance = new EquipmentListFragment();
+        mInstance = new EquipmentListFragment();
+        return mInstance;
+    }
+
+    public static EquipmentListFragment getInstance() {
+        L.d(TAG, "getInstance()");
+        if (mInstance == null) {
+            mInstance = new EquipmentListFragment();
         }
-        return instance;
+        return mInstance;
     }
 
     public void setEquipment(List<EquipmentData> equipment, List<EquipmentState> equipmentState) {
@@ -36,13 +73,18 @@ public class EquipmentListFragment extends ListFragment {
         setListAdapter(equipmentAdapter);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        L.d(TAG, "onAttach()");
-        if (equipment != null) {
-            equipmentAdapter = new EquipmentAdapter(activity, equipment, equipmentState);
-            setListAdapter(equipmentAdapter);
-        }
-    }
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
+
+    // ---------------------------------------------------------------------------------------------
+    // Protected methods
+    // ---------------------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
+
+
 }

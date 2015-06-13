@@ -25,6 +25,7 @@ import com.devicehive.sspasov.client.fragmetns.DeviceNotificationsFragment;
 import com.devicehive.sspasov.client.fragmetns.DeviceSendCommandFragment;
 import com.devicehive.sspasov.client.fragmetns.EquipmentListFragment;
 import com.devicehive.sspasov.client.objects.SampleDeviceClient;
+import com.devicehive.sspasov.client.utils.DeviceNotificationManager;
 import com.devicehive.sspasov.client.utils.L;
 import com.devicehive.sspasov.client.views.SlidingTabLayout;
 
@@ -50,6 +51,7 @@ public class DeviceActivity extends BaseActivity implements
     // ---------------------------------------------------------------------------------------------
     private SampleClientApplication app;
     private DeviceData device;
+    private String deviceId;
     private SampleDeviceClient deviceClient;
 
     private ViewPager viewPager;
@@ -80,6 +82,7 @@ public class DeviceActivity extends BaseActivity implements
 
         app = (SampleClientApplication) getApplication();
         deviceClient = app.setupClientForDevice(device);
+        deviceId = device.getId();
 
         deviceInformationFragment = DeviceInformationFragment.newInstance();
         deviceInformationFragment.setDeviceData(device);
@@ -88,9 +91,12 @@ public class DeviceActivity extends BaseActivity implements
         equipmentListFragment = EquipmentListFragment.newInstance();
 
         deviceNotificationsFragment = DeviceNotificationsFragment.newInstance();
+        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
+        deviceNotificationsFragment.setNotifications(receivedNotifications);
 
         deviceSendCommandFragment = DeviceSendCommandFragment.newInstance();
         deviceSendCommandFragment.setParameterProvider(this);
+        deviceSendCommandFragment.setDeviceStatus(device.getStatus());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(device.getName());
@@ -100,6 +106,7 @@ public class DeviceActivity extends BaseActivity implements
 
         viewPager = (ViewPager) findViewById(R.id.pager);
         viewPager.setAdapter(new SimplePagerAdapter(this, getSupportFragmentManager()));
+        viewPager.setOffscreenPageLimit(4);
 
         SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
         mSlidingTabLayout.setDistributeEvenly(true);
@@ -172,7 +179,11 @@ public class DeviceActivity extends BaseActivity implements
     @Override
     public void onReceivesNotification(Notification notification) {
         L.d(TAG, "onReceivesNotification()");
-        receivedNotifications.add(notification);
+        L.d(TAG, notification.getParameters().toString());
+
+        DeviceNotificationManager.putNotification(deviceId, notification);
+
+        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
         deviceNotificationsFragment.setNotifications(receivedNotifications);
     }
 
@@ -195,8 +206,11 @@ public class DeviceActivity extends BaseActivity implements
         L.d(TAG, "onReceiveResult()");
         switch (resultCode) {
             case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:
+                L.d(TAG, "MSG_COMPLETE_REQUEST");
                 break;
+
             case DeviceHiveResultReceiver.MSG_EXCEPTION:
+                L.d(TAG, "MSG_EXCEPTION");
                 final Throwable exception = DeviceClientCommand.getThrowable(resultData);
                 L.e(TAG, "Failed to execute network command", exception);
                 if (tagId == TAG_GET_DEVICE) {
@@ -210,11 +224,15 @@ public class DeviceActivity extends BaseActivity implements
                             .getId()));
                 }
                 break;
+
             case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
+                L.d(TAG, "MSG_STATUS_FAILURE");
                 int statusCode = DeviceClientCommand.getStatusCode(resultData);
                 showErrorDialog("Server returned status code: " + statusCode);
                 break;
+
             case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
+                L.d(TAG, "MSG_HANDLED_RESPONSE");
                 if (tagId == TAG_GET_DEVICE) {
                     final DeviceData deviceData = GetDeviceCommand.getDevice(resultData);
                     deviceInformationFragment.setDeviceData(deviceData);

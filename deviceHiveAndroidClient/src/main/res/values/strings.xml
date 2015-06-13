@@ -33,7 +33,6 @@
     <string name="tab_device_notifications">Notifications</string>
     <string name="tab_device_send_command">Send Command</string>
 
-
     <!--Device Information Fragment-->
     <string name="tv_title_device">Device</string>
     <string name="tv_content_device_name">Device Name</string>
@@ -52,7 +51,6 @@
     <string name="tv_calculating">calculating</string>
     <string name="empty">--</string>
 
-
     <!--Equipment List Item-->
     <string name="et_equipment_name">Equipment name</string>
     <string name="tv_equipment_code">Code</string>
@@ -60,10 +58,12 @@
     <string name="tv_equipment_type">Type</string>
     <string name="tv_equipment_type_empty">Equipment type</string>
 
-
     <!--Notification List Item-->
     <string name="notification_name">Notification name</string>
     <string name="notification_params">Notification params</string>
 
+    <!--Send Command Fragment-->
+    <string name="hint_command_name">command name</string>
+    <string name="equipment">Equipment</string>
 
 </resources>
