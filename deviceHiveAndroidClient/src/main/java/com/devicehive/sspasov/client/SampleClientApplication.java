@@ -34,7 +34,7 @@ public class SampleClientApplication extends Application {
         NetworkReceiver.startReciever(this);
         DeviceNotificationManager.init();
 
-        L.useDebugMode(false);
+        L.useDebugMode(true);
         L.useDebugData(false);
     }
 

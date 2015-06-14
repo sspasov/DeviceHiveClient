@@ -20,10 +20,10 @@ import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
 import com.devicehive.sspasov.client.BuildConfig;
-import com.devicehive.sspasov.client.recievers.NetworkReceiver;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.objects.SampleDeviceClient;
+import com.devicehive.sspasov.client.recievers.NetworkReceiver;
 import com.devicehive.sspasov.client.ui.dialogs.WarningDialog;
 import com.devicehive.sspasov.client.utils.L;
 
@@ -167,7 +167,7 @@ public class BaseActivity extends AppCompatActivity {
             command.start(getApplicationContext(), getNetworkCommandConfig());
         } else {
             L.d(TAG, "connection NOT available");
-            //TODO: something indicating
+            Toast.makeText(this, "No internet connection.", Toast.LENGTH_LONG).show();
         }
     }
 
