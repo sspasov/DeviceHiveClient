@@ -10,9 +10,10 @@
         android:targetSdkVersion="22"/>
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
@@ -22,7 +23,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.StartupConfigurationActivity"
+            android:name=".ui.activities.StartupConfigurationActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_startup_configuration"
             android:screenOrientation="sensorPortrait"
@@ -30,7 +31,7 @@
         </activity>
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.LoginActivity"
+            android:name=".ui.activities.LoginActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
@@ -42,28 +43,28 @@
         </activity>
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.NetworksActivity"
+            android:name=".ui.activities.NetworksActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.NetworkDevicesActivity"
+            android:name=".ui.activities.NetworkDevicesActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.DeviceActivity"
+            android:name=".ui.activities.DeviceActivity"
             android:configChanges="orientation"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustPan">
         </activity>
 
         <activity
-            android:name="com.devicehive.sspasov.client.ui.SettingsActivity"
+            android:name=".ui.activities.SettingsActivity"
             android:configChanges="orientation"
             android:label="@string/title_activity_settings"
             android:screenOrientation="sensorPortrait"

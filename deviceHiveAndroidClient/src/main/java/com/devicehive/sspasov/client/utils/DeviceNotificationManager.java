@@ -9,10 +9,21 @@ import java.util.List;
  * Created by toni on 13.06.15.
  */
 public class DeviceNotificationManager {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
+    private static final String DEVICE_STATUS = "DeviceStatus";
+    private static final String DEVICE_UPDATE = "$device-update";
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private static List<String> devicesList;
     private static List<List<Notification>> devicesNotificationsList;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public static void init() {
         devicesList = new LinkedList<>();
         devicesNotificationsList = new LinkedList<>();
@@ -20,6 +31,9 @@ public class DeviceNotificationManager {
 
 
     public static void putNotification(String deviceId, Notification notification) {
+        if (notification.getName().contains(DEVICE_STATUS) || notification.getName().contains(DEVICE_UPDATE)) {
+            return;
+        }
         if (devicesList.contains(deviceId)) {
             int idx = devicesList.indexOf(deviceId);
             devicesNotificationsList.get(idx).add(notification);

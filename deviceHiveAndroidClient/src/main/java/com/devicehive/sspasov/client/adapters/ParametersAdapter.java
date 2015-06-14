@@ -17,10 +17,15 @@ import java.util.List;
  * Created by toni on 13.06.15.
  */
 public class ParametersAdapter extends BaseAdapter {
-
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private final LayoutInflater inflater;
     private final List<Parameter> parameters;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public ParametersAdapter(Context context, List<Parameter> parameters) {
         this.parameters = parameters;
         this.inflater = LayoutInflater.from(context);
@@ -31,6 +36,9 @@ public class ParametersAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public int getCount() {
         return parameters.size();
@@ -50,7 +58,7 @@ public class ParametersAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.parameters_list_item, null);
+            convertView = inflater.inflate(R.layout.list_item_parameters, null);
             holder = new ViewHolder();
             holder.image = (ImageView) convertView.findViewById(R.id.iv_add_parameter);
             holder.name = (TextView) convertView.findViewById(R.id.tv_parameter_name);
@@ -70,6 +78,9 @@ public class ParametersAdapter extends BaseAdapter {
         return convertView;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner classes
+    // ---------------------------------------------------------------------------------------------
     private class ViewHolder {
         ImageView image;
         TextView name;

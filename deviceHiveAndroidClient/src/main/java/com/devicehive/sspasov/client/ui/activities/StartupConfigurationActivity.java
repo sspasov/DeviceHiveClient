@@ -1,9 +1,10 @@
-package com.devicehive.sspasov.client.ui;
+package com.devicehive.sspasov.client.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 
@@ -20,7 +21,6 @@ public class StartupConfigurationActivity extends AppCompatActivity implements V
     // ---------------------------------------------------------------------------------------------
     private static final String TAG = StartupConfigurationActivity.class.getSimpleName();
     public static final String API = "api";
-
 
     // ---------------------------------------------------------------------------------------------
     // Fields
@@ -85,9 +85,7 @@ public class StartupConfigurationActivity extends AppCompatActivity implements V
 
         isEmpty = false;
 
-        if (etApiEndpoint.getText()
-                .toString()
-                .isEmpty()) {
+        if (TextUtils.isEmpty(etApiEndpoint.getText())) {
             etApiEndpoint.setError(getString(R.string.empty_api_endpoint));
             isEmpty = true;
         }

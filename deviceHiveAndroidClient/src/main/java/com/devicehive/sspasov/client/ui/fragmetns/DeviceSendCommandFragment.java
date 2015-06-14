@@ -1,4 +1,4 @@
-package com.devicehive.sspasov.client.fragmetns;
+package com.devicehive.sspasov.client.ui.fragmetns;
 
 import android.app.Activity;
 import android.database.DataSetObserver;
@@ -118,10 +118,10 @@ public class DeviceSendCommandFragment extends Fragment {
             public void onClick(View v) {
                 if (!mDeviceStatus.contains("Offline")) {
                     sendCommand();
+                    clearView();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Warning !!! Device is offline.", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
@@ -220,8 +220,7 @@ public class DeviceSendCommandFragment extends Fragment {
 
     private void sendCommand() {
         L.d(TAG, "sendCommand()");
-        String command = etCommandName.getText()
-                .toString();
+        String command = etCommandName.getText().toString();
         if (TextUtils.isEmpty(command)) {
             command = "TestCommandAndroidFramework";
         }
@@ -246,6 +245,16 @@ public class DeviceSendCommandFragment extends Fragment {
             paramsMap.put(params.get(i).name, params.get(i).value);
         }
         return paramsMap;
+    }
+
+    private void clearView() {
+        etCommandName.setText("");
+        spEquipment.refreshDrawableState();
+        for (int i = 1; i < parametersAdapter.getCount(); i++) {
+            parametersAdapter.removeParameter(i);
+        }
+        spEquipment.setSelection(0, true);
+        lvParameters.setAdapter(parametersAdapter);
     }
 
     // ---------------------------------------------------------------------------------------------

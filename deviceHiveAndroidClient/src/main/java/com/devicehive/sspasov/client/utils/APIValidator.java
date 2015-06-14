@@ -7,12 +7,21 @@ import java.util.regex.Pattern;
  * Created by toni on 11.06.15.
  */
 public class APIValidator {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = APIValidator.class.getSimpleName();
+    private static final String API_PATTERN = "((?:http|https)(?::\\/{2}[\\w]+)(?:[\\/|\\.]?)(?:[^\\s\"]*))";
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private static Pattern pattern;
     private static Matcher matcher;
-    String txt="http://nn8170.pg.devicehive.com/api";
-    private static final String API_PATTERN = "((?:http|https)(?::\\/{2}[\\w]+)(?:[\\/|\\.]?)(?:[^\\s\"]*))";
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
 
     /**
      * Validate hex with regular expression

@@ -17,15 +17,23 @@ import java.util.List;
  * Created by toni on 10.06.15.
  */
 public class NotificationsAdapter extends BaseAdapter {
-
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private final LayoutInflater mInflater;
     private List<Notification> mNotifications;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public NotificationsAdapter(Context context, List<Notification> notifications) {
         this.mNotifications = notifications;
         this.mInflater = LayoutInflater.from(context);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public int getCount() {
         return mNotifications.size();
@@ -45,7 +53,7 @@ public class NotificationsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.notification_list_item, null);
+            convertView = mInflater.inflate(R.layout.list_item_notification, null);
             holder = new ViewHolder();
             holder.name = (TextView) convertView.findViewById(R.id.tv_command_name);
             holder.params = (TextView) convertView.findViewById(R.id.tv_command_params);
@@ -74,6 +82,9 @@ public class NotificationsAdapter extends BaseAdapter {
         return convertView;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner classes
+    // ---------------------------------------------------------------------------------------------
     private class ViewHolder {
         TextView name;
         TextView params;

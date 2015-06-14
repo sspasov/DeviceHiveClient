@@ -7,28 +7,46 @@ import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.config.ClientPreferences;
 import com.devicehive.sspasov.client.config.DeviceHiveConfig;
 import com.devicehive.sspasov.client.objects.SampleDeviceClient;
+import com.devicehive.sspasov.client.recievers.NetworkReceiver;
 import com.devicehive.sspasov.client.utils.DeviceNotificationManager;
 import com.devicehive.sspasov.client.utils.L;
 
 public class SampleClientApplication extends Application {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = SampleClientApplication.class.getSimpleName();
 
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private SampleDeviceClient client;
-
     private ClientPreferences prefs;
 
+    // ---------------------------------------------------------------------------------------------
+    // Activity life cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public void onCreate() {
         super.onCreate();
 
+        loadPreference();
+        NetworkReceiver.startReciever(this);
         DeviceNotificationManager.init();
 
-        L.useDebugMode(true);
-        L.useDebugData(true);
-        loadPreference();
+        L.useDebugMode(false);
+        L.useDebugData(false);
     }
 
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        NetworkReceiver.stopReceiver(this);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public SampleDeviceClient setupClientForDevice(DeviceData device) {
         if (client != null) {
             if (!client.getDevice().getId().equals(device.getId())) {
@@ -53,6 +71,9 @@ public class SampleClientApplication extends Application {
         return client;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
     private SampleDeviceClient getClientForDevice(DeviceData device) {
         SampleDeviceClient client = new SampleDeviceClient(getApplicationContext(), device);
         client.setApiEnpointUrl(ClientConfig.API_ENDPOINT);
@@ -94,5 +115,4 @@ public class SampleClientApplication extends Application {
         L.d(TAG, "ClientPref remember password: " + prefs.getRememberPassword());
         ClientConfig.REMEMBER_PASSWORD = prefs.getRememberPassword();
     }
-
 }

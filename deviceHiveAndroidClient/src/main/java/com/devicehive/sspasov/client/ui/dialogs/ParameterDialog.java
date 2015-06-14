@@ -1,4 +1,4 @@
-package com.devicehive.sspasov.client.dialogs;
+package com.devicehive.sspasov.client.ui.dialogs;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -12,22 +12,33 @@ import android.widget.EditText;
 import com.devicehive.sspasov.client.R;
 
 public class ParameterDialog extends DialogFragment {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     public static final String TAG = ParameterDialog.class.getSimpleName();
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private EditText etName;
     private EditText etValue;
 
+    // ---------------------------------------------------------------------------------------------
+    // Interfaces
+    // ---------------------------------------------------------------------------------------------
     public interface ParameterDialogListener {
         void onFinishEditingParameter(String name, String value);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Fragment Life Cycle
+    // ---------------------------------------------------------------------------------------------
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.parameter_dialog, null);
+        View view = inflater.inflate(R.layout.dialog_parameter, null);
         etName = (EditText) view.findViewById(R.id.et_name);
         etValue = (EditText) view.findViewById(R.id.et_value);
 

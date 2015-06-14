@@ -1,7 +1,5 @@
-package com.devicehive.sspasov.client.ui;
+package com.devicehive.sspasov.client.ui.activities;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,16 +10,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.dataart.android.devicehive.Network;
-import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.client.commands.GetNetworksCommand;
-import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.adapters.NetworksAdapter;
 import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.utils.L;
-
-import org.apache.http.auth.MalformedChallengeException;
-import org.apache.http.client.ClientProtocolException;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,7 +25,7 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
     // Constants
     // ---------------------------------------------------------------------------------------------
     private static final String TAG = NetworksActivity.class.getSimpleName();
-    private static final int TAG_GET_NETWORKS = getTagId(GetNetworksCommand.class);
+
 
     // ---------------------------------------------------------------------------------------------
     // Fields
@@ -115,47 +108,20 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
     }
 
     @Override
-    protected void onReceiveResult(final int resultCode, final int tagId, final Bundle resultData) {
-        L.d(TAG, "onReceiveResult()");
-        switch (resultCode) {
-            case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:
-                break;
-            case DeviceHiveResultReceiver.MSG_EXCEPTION:
-                final Throwable exception = DeviceClientCommand.getThrowable(resultData);
-                L.e(TAG, "Failed to execute network command", exception);
-                if (exception instanceof ClientProtocolException &&
-                        exception.getCause() instanceof MalformedChallengeException) {
-                    showSettingsDialog("Authentication error!",
-                            "Looks like your credentials are not valid.");
-                } else {
-                    showSettingsDialog("Error", "Failed to connect to the server.");
+    protected void getRequestResult(int tagId, Bundle resultData) {
+        final List<Network> networks = GetNetworksCommand.getNetworks(resultData);
+        L.d(TAG, "Fetched networks: " + networks);
+        if (networks != null) {
+            Collections.sort(networks, new Comparator<Network>() {
+                @Override
+                public int compare(Network lhs, Network rhs) {
+                    return lhs.getName()
+                            .compareToIgnoreCase(rhs.getName());
                 }
-                break;
-            case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
-                int statusCode = DeviceClientCommand.getStatusCode(resultData);
-                L.e(TAG, "Failed to execute network command. Status code: " + statusCode);
-                if (statusCode == 404) {
-                    showSettingsDialog("Error", "Failed to connect to the server.");
-                }
-                break;
-            case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
-                if (tagId == TAG_GET_NETWORKS) {
-                    final List<Network> networks = GetNetworksCommand.getNetworks(resultData);
-                    L.d(TAG, "Fetched networks: " + networks);
-                    if (networks != null) {
-                        Collections.sort(networks, new Comparator<Network>() {
-                            @Override
-                            public int compare(Network lhs, Network rhs) {
-                                return lhs.getName()
-                                        .compareToIgnoreCase(rhs.getName());
-                            }
-                        });
-                        networksListView.setAdapter(new NetworksAdapter(this, networks));
-                        progressBar.setVisibility(View.GONE);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }
-                break;
+            });
+            networksListView.setAdapter(new NetworksAdapter(this, networks));
+            progressBar.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -166,27 +132,6 @@ public class NetworksActivity extends BaseActivity implements AdapterView.OnItem
         startActivity(loginActivity);
         finish();
     }
-
-    private void showSettingsDialog(String title, String message) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final AlertDialog dialog = builder.setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("Edit settings", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //TODO: wifi activity
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        dialog.show();
-    }
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

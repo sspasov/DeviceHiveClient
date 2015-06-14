@@ -6,26 +6,38 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.devicehive.sspasov.client.R;
-import com.devicehive.sspasov.client.fragmetns.DeviceInformationFragment;
-import com.devicehive.sspasov.client.fragmetns.DeviceNotificationsFragment;
-import com.devicehive.sspasov.client.fragmetns.DeviceSendCommandFragment;
-import com.devicehive.sspasov.client.fragmetns.EquipmentListFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceInformationFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceNotificationsFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceSendCommandFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.EquipmentListFragment;
 import com.devicehive.sspasov.client.utils.L;
 
 /**
  * Created by stanimir on 03.06.15.
  */
 public class SimplePagerAdapter extends FragmentStatePagerAdapter {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = SimplePagerAdapter.class.getSimpleName();
-
     private static int NUM_ITEMS = 4;
+
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private Context mContext;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public SimplePagerAdapter(Context context, FragmentManager fragmentManager) {
         super(fragmentManager);
         mContext = context;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public int getCount() {
         return NUM_ITEMS;

@@ -1,30 +1,29 @@
-package com.devicehive.sspasov.client.ui;
+package com.devicehive.sspasov.client.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.EquipmentData;
 import com.dataart.android.devicehive.EquipmentState;
 import com.dataart.android.devicehive.Notification;
-import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.client.commands.GetDeviceClassEquipmentCommand;
 import com.dataart.android.devicehive.client.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.client.commands.GetDeviceEquipmentStateCommand;
-import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.SampleClientApplication;
 import com.devicehive.sspasov.client.adapters.SimplePagerAdapter;
-import com.devicehive.sspasov.client.dialogs.ParameterDialog;
-import com.devicehive.sspasov.client.fragmetns.DeviceInformationFragment;
-import com.devicehive.sspasov.client.fragmetns.DeviceNotificationsFragment;
-import com.devicehive.sspasov.client.fragmetns.DeviceSendCommandFragment;
-import com.devicehive.sspasov.client.fragmetns.EquipmentListFragment;
 import com.devicehive.sspasov.client.objects.SampleDeviceClient;
+import com.devicehive.sspasov.client.ui.dialogs.ParameterDialog;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceInformationFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceNotificationsFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.DeviceSendCommandFragment;
+import com.devicehive.sspasov.client.ui.fragmetns.EquipmentListFragment;
 import com.devicehive.sspasov.client.utils.DeviceNotificationManager;
 import com.devicehive.sspasov.client.utils.L;
 import com.devicehive.sspasov.client.views.SlidingTabLayout;
@@ -40,10 +39,6 @@ public class DeviceActivity extends BaseActivity implements
     // Constants
     // ---------------------------------------------------------------------------------------------
     private static final String TAG = DeviceActivity.class.getSimpleName();
-    private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
-    private final static int TAG_GET_EQUIPMENT = getTagId(GetDeviceClassEquipmentCommand.class);
-    private final static int TAG_GET_EQUIPMENT_STATE = getTagId(GetDeviceEquipmentStateCommand.class);
-
     public static final String EXTRA_DEVICE = "extra_device";
 
     // ---------------------------------------------------------------------------------------------
@@ -52,7 +47,6 @@ public class DeviceActivity extends BaseActivity implements
     private SampleClientApplication app;
     private DeviceData device;
     private String deviceId;
-    private SampleDeviceClient deviceClient;
 
     private ViewPager viewPager;
 
@@ -84,39 +78,13 @@ public class DeviceActivity extends BaseActivity implements
         deviceClient = app.setupClientForDevice(device);
         deviceId = device.getId();
 
-        deviceInformationFragment = DeviceInformationFragment.newInstance();
-        deviceInformationFragment.setDeviceData(device);
-        deviceInformationFragment.setContext(this);
+        setupFragments();
 
-        equipmentListFragment = EquipmentListFragment.newInstance();
+        setupToolbar();
 
-        deviceNotificationsFragment = DeviceNotificationsFragment.newInstance();
-        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
-        deviceNotificationsFragment.setNotifications(receivedNotifications);
+        setupViewPager();
 
-        deviceSendCommandFragment = DeviceSendCommandFragment.newInstance();
-        deviceSendCommandFragment.setParameterProvider(this);
-        deviceSendCommandFragment.setDeviceStatus(device.getStatus());
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(device.getName());
-        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
-        setSupportActionBar(toolbar);
-
-        viewPager = (ViewPager) findViewById(R.id.pager);
-        viewPager.setAdapter(new SimplePagerAdapter(this, getSupportFragmentManager()));
-        viewPager.setOffscreenPageLimit(4);
-
-        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setViewPager(viewPager);
-        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getColorBasedForPosition(position);
-            }
-        });
+        setupSlidingTabLayout();
     }
 
     @Override
@@ -154,6 +122,48 @@ public class DeviceActivity extends BaseActivity implements
     // ---------------------------------------------------------------------------------------------
     // Private methods
     // ---------------------------------------------------------------------------------------------
+    private void setupFragments() {
+        deviceInformationFragment = DeviceInformationFragment.newInstance();
+        deviceInformationFragment.setDeviceData(device);
+        deviceInformationFragment.setContext(this);
+
+        equipmentListFragment = EquipmentListFragment.newInstance();
+
+        deviceNotificationsFragment = DeviceNotificationsFragment.newInstance();
+        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
+        deviceNotificationsFragment.setNotifications(receivedNotifications);
+
+        deviceSendCommandFragment = DeviceSendCommandFragment.newInstance();
+        deviceSendCommandFragment.setParameterProvider(this);
+        deviceSendCommandFragment.setDeviceStatus(device.getStatus());
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(device.getName());
+        toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp);
+        setSupportActionBar(toolbar);
+    }
+
+    private void setupViewPager() {
+        viewPager = (ViewPager) findViewById(R.id.pager);
+        viewPager.setAdapter(new SimplePagerAdapter(this, getSupportFragmentManager()));
+        viewPager.setOffscreenPageLimit(4);
+    }
+
+    private void setupSlidingTabLayout() {
+        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(viewPager);
+        mSlidingTabLayout.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getColorBasedForPosition(position);
+            }
+        });
+    }
+
     private int getColorBasedForPosition(int pos) {
         int color;
         switch (pos) {
@@ -177,97 +187,63 @@ public class DeviceActivity extends BaseActivity implements
     // Override methods
     // ---------------------------------------------------------------------------------------------
     @Override
-    public void onReceivesNotification(Notification notification) {
-        L.d(TAG, "onReceivesNotification()");
-        L.d(TAG, notification.getParameters().toString());
-
-        DeviceNotificationManager.putNotification(deviceId, notification);
-
-        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
-        deviceNotificationsFragment.setNotifications(receivedNotifications);
-    }
-
-    @Override
     public void sendCommand(Command command) {
         L.d(TAG, "sendCommand()");
         deviceClient.sendCommand(command);
     }
 
     @Override
-    protected void startRequest() {
-        L.d(TAG, "startEquipmentRequest()");
-        startCommand(new GetDeviceClassEquipmentCommand(deviceClient.getDevice()
-                .getDeviceClass()
-                .getId()));
+    public void onReceivesNotification(Notification notification) {
+        L.d(TAG, "onReceivesNotification()");
+
+        DeviceNotificationManager.putNotification(deviceId, notification);
+
+        receivedNotifications = DeviceNotificationManager.getNotifications(deviceId);
+        deviceNotificationsFragment.setNotifications(receivedNotifications);
+        Toast.makeText(this, "Received notification from: " + deviceId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    protected void onReceiveResult(final int resultCode, final int tagId, final Bundle resultData) {
-        L.d(TAG, "onReceiveResult()");
-        switch (resultCode) {
-            case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:
-                L.d(TAG, "MSG_COMPLETE_REQUEST");
-                break;
+    protected void startRequest() {
+        L.d(TAG, "startEquipmentRequest()");
+        startCommand(
+                new GetDeviceClassEquipmentCommand(
+                        deviceClient.getDevice().getDeviceClass().getId()));
+    }
 
-            case DeviceHiveResultReceiver.MSG_EXCEPTION:
-                L.d(TAG, "MSG_EXCEPTION");
-                final Throwable exception = DeviceClientCommand.getThrowable(resultData);
-                L.e(TAG, "Failed to execute network command", exception);
-                if (tagId == TAG_GET_DEVICE) {
-                    showErrorDialog("Failed to retrieve device data");
-                } else if (tagId == TAG_GET_EQUIPMENT) {
-                    // retry
-                    startRequest();
-                } else if (tagId == TAG_GET_EQUIPMENT_STATE) {
-                    // retry
-                    startCommand(new GetDeviceEquipmentStateCommand(deviceClient.getDevice()
-                            .getId()));
-                }
-                break;
-
-            case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
-                L.d(TAG, "MSG_STATUS_FAILURE");
-                int statusCode = DeviceClientCommand.getStatusCode(resultData);
-                showErrorDialog("Server returned status code: " + statusCode);
-                break;
-
-            case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
-                L.d(TAG, "MSG_HANDLED_RESPONSE");
-                if (tagId == TAG_GET_DEVICE) {
-                    final DeviceData deviceData = GetDeviceCommand.getDevice(resultData);
-                    deviceInformationFragment.setDeviceData(deviceData);
-                } else if (tagId == TAG_GET_EQUIPMENT) {
-                    this.equipment = GetDeviceClassEquipmentCommand.getEquipment(resultData);
-                    deviceSendCommandFragment.setEquipment(equipment);
-                    startCommand(new GetDeviceEquipmentStateCommand(deviceClient.getDevice()
-                            .getId()));
-                } else if (tagId == TAG_GET_EQUIPMENT_STATE) {
-                    this.equipmentState =
-                            GetDeviceEquipmentStateCommand.getEquipmentState(resultData);
-                    equipmentListFragment.setEquipment(equipment, equipmentState);
-                    if (!deviceClient.isReceivingNotifications()) {
-                        deviceClient.startReceivingNotifications();
-                    }
-                }
-                break;
+    @Override
+    protected void getRequestResult(int tagId, Bundle resultData) {
+        if (tagId == TAG_GET_DEVICE) {
+            final DeviceData deviceData = GetDeviceCommand.getDevice(resultData);
+            deviceInformationFragment.setDeviceData(deviceData);
+        } else if (tagId == TAG_GET_EQUIPMENT) {
+            this.equipment = GetDeviceClassEquipmentCommand.getEquipment(resultData);
+            deviceSendCommandFragment.setEquipment(equipment);
+            startCommand(new GetDeviceEquipmentStateCommand(deviceClient.getDevice().getId()));
+        } else if (tagId == TAG_GET_EQUIPMENT_STATE) {
+            this.equipmentState = GetDeviceEquipmentStateCommand.getEquipmentState(resultData);
+            equipmentListFragment.setEquipment(equipment, equipmentState);
+            if (!deviceClient.isReceivingNotifications()) {
+                deviceClient.startReceivingNotifications();
+            }
         }
     }
 
     @Override
     public void onStartSendingCommand(Command command) {
         L.d(TAG, "Start sending command: " + command.getCommand());
+        Toast.makeText(this, "Sent command \"" + command.getCommand() + "\"", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onFinishSendingCommand(Command command) {
         L.d(TAG, "Finish sending command: " + command.getCommand());
-        showDialog("Success!", "Command \"" + command.getCommand() + "\" has been sent.");
     }
 
     @Override
     public void onFailSendingCommand(Command command) {
         L.d(TAG, "Fail sending command: " + command.getCommand() + "\n");
-        showErrorDialog("Failed to send command: " + command.getCommand());
+        Toast.makeText(this, "Failed sending command \"" + command.getCommand() + "\"", Toast.LENGTH_SHORT).show();
     }
 
     @Override

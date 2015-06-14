@@ -17,11 +17,16 @@ import java.util.List;
  * Created by toni on 10.06.15.
  */
 public class EquipmentAdapter extends BaseAdapter {
-
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private final LayoutInflater inflater;
     private List<EquipmentData> equipmentList;
     private List<EquipmentState> equipmentStateList;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public EquipmentAdapter(Context context, List<EquipmentData> equipmentList,
                             List<EquipmentState> equipmentStateList) {
         this.equipmentList = equipmentList;
@@ -29,6 +34,30 @@ public class EquipmentAdapter extends BaseAdapter {
         this.inflater = LayoutInflater.from(context);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
+    private EquipmentState getEquipmentState(EquipmentData equipmentData) {
+        for (EquipmentState state : equipmentStateList) {
+            if (state.getEquipmentCode()
+                    .equals(equipmentData.getCode())) {
+                return state;
+            }
+        }
+        return null;
+    }
+
+    private static String equipmentStateAsString(EquipmentState state) {
+        if (state != null) {
+            return "" + state.getParameters();
+        } else {
+            return "--";
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public int getCount() {
         return equipmentList.size();
@@ -48,7 +77,7 @@ public class EquipmentAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.equipment_list_item, null);
+            convertView = inflater.inflate(R.layout.list_item_equipment, null);
             holder = new ViewHolder();
             holder.name = (TextView) convertView.findViewById(R.id.tv_equipment_name);
             holder.code = (TextView) convertView.findViewById(R.id.tv_equipment_code);
@@ -70,29 +99,14 @@ public class EquipmentAdapter extends BaseAdapter {
         return convertView;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner classes
+    // ---------------------------------------------------------------------------------------------
     private class ViewHolder {
         TextView name;
         TextView code;
         TextView type;
         //TextView data;
         //TextView state;
-    }
-
-    private EquipmentState getEquipmentState(EquipmentData equipmentData) {
-        for (EquipmentState state : equipmentStateList) {
-            if (state.getEquipmentCode()
-                    .equals(equipmentData.getCode())) {
-                return state;
-            }
-        }
-        return null;
-    }
-
-    private static String equipmentStateAsString(EquipmentState state) {
-        if (state != null) {
-            return "" + state.getParameters();
-        } else {
-            return "--";
-        }
     }
 }

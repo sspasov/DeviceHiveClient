@@ -16,15 +16,23 @@ import java.util.List;
  * Created by toni on 10.06.15.
  */
 public class NetworksAdapter extends BaseAdapter {
-
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private final LayoutInflater mInflater;
     private final List<Network> mNetworksList;
 
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public NetworksAdapter(Context context, List<Network> networks) {
         this.mNetworksList = networks;
         this.mInflater = LayoutInflater.from(context);
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     public int getCount() {
         return mNetworksList.size();
@@ -44,7 +52,7 @@ public class NetworksAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.network_list_item, null);
+            convertView = mInflater.inflate(R.layout.list_item_network, null);
             holder = new ViewHolder();
             holder.name = (TextView) convertView.findViewById(R.id.network_name_text_view);
             holder.description =
@@ -59,6 +67,9 @@ public class NetworksAdapter extends BaseAdapter {
         return convertView;
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Inner classes
+    // ---------------------------------------------------------------------------------------------
     private class ViewHolder {
         TextView name;
         TextView description;

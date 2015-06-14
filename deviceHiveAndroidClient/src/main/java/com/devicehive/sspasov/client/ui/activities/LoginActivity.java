@@ -1,21 +1,24 @@
-package com.devicehive.sspasov.client.ui;
+package com.devicehive.sspasov.client.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import com.dataart.android.devicehive.Network;
+import com.dataart.android.devicehive.client.commands.GetNetworksCommand;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.config.ClientConfig;
 import com.devicehive.sspasov.client.config.ClientPreferences;
 import com.devicehive.sspasov.client.utils.L;
 import com.github.clans.fab.FloatingActionButton;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+import java.util.List;
+
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     // ---------------------------------------------------------------------------------------------
     // Constants
     // ---------------------------------------------------------------------------------------------
@@ -58,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     // ---------------------------------------------------------------------------------------------
-    // Protected methods
+    // Private methods
     // ---------------------------------------------------------------------------------------------
     private void firstStartup() {
         if (ClientConfig.FIRST_STARTUP && (ClientConfig.API_ENDPOINT == null)) {
@@ -104,9 +107,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    private void validAuthorization() {
+        prefs.setIsFirstStartup(false);
+        ClientConfig.FIRST_STARTUP = prefs.isFirstStartup();
+
+        prefs.setCredentialsSync(
+                etUsername.getText().toString(),
+                etPassword.getText().toString());
+
+        if (cbPassword.isChecked()) {
+            prefs.setRememberPassword(true);
+        } else {
+            prefs.setRememberPassword(false);
+        }
+        ClientConfig.REMEMBER_PASSWORD = prefs.getRememberPassword();
+
+        Intent networksActivity = new Intent(this, NetworksActivity.class);
+        startActivity(networksActivity);
+        finish();
+    }
+
     // ---------------------------------------------------------------------------------------------
     // Override methods
     // ---------------------------------------------------------------------------------------------
+    @Override
+    protected void startRequest() {
+        L.d(TAG, "startNetworksRequest()");
+        startCommand(new GetNetworksCommand());
+    }
+
+    @Override
+    protected void getRequestResult(int tagId, Bundle resultData) {
+        final List<Network> networks = GetNetworksCommand.getNetworks(resultData);
+        L.d(TAG, "Fetched networks: " + networks);
+        if (networks != null) {
+            validAuthorization();
+        }
+    }
+
     @Override
     public void onBackPressed() {
         L.d(TAG, "onBackPressed()");
@@ -138,26 +176,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         if (!isEmpty) {
-            prefs.setIsFirstStartup(false);
-            ClientConfig.FIRST_STARTUP = prefs.isFirstStartup();
-
-            prefs.setCredentialsSync(
-                    etUsername.getText().toString(),
-                    etPassword.getText().toString());
-
             ClientConfig.USERNAME = etUsername.getText().toString();
             ClientConfig.PASSWORD = etPassword.getText().toString();
 
-            if (cbPassword.isChecked()) {
-                prefs.setRememberPassword(true);
-            } else {
-                prefs.setRememberPassword(false);
-            }
-            ClientConfig.REMEMBER_PASSWORD = prefs.getRememberPassword();
-
-            Intent networksActivity = new Intent(this, NetworksActivity.class);
-            startActivity(networksActivity);
-            finish();
+            startRequest();
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.devicehive.sspasov.client.fragmetns;
+package com.devicehive.sspasov.client.ui.fragmetns;
 
 import android.app.Activity;
 import android.support.v4.app.ListFragment;

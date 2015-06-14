@@ -6,10 +6,15 @@ import android.util.Log;
  * Created by toni on 01.06.15.
  */
 public class L {
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
+    private static boolean debugMode = false;
+    private static boolean debugData = false;
 
-    static boolean debugMode = false;
-    static boolean debugData = false;
-
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public static void useDebugMode(boolean mode) {
         debugMode = mode;
     }
@@ -25,7 +30,6 @@ public class L {
     public static boolean isUsingDebugData() {
         return debugData;
     }
-
 
     public static void d(String tag, String message) {
         if (debugMode) {
@@ -50,6 +54,4 @@ public class L {
             Log.w(tag, message);
         }
     }
-
-
 }

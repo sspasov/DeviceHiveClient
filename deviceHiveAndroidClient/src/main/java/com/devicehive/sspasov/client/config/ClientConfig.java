@@ -4,6 +4,9 @@ package com.devicehive.sspasov.client.config;
  * Created by toni on 09.06.15.
  */
 public class ClientConfig {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     public static String API_ENDPOINT;
 
     public static boolean FIRST_STARTUP;

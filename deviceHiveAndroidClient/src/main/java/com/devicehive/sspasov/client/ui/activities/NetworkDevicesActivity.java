@@ -1,4 +1,4 @@
-package com.devicehive.sspasov.client.ui;
+package com.devicehive.sspasov.client.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,10 +11,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.dataart.android.devicehive.DeviceData;
-import com.dataart.android.devicehive.Network;
-import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.client.commands.GetNetworkDevicesCommand;
-import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.devicehive.sspasov.client.R;
 import com.devicehive.sspasov.client.adapters.NetworkDevicesAdapter;
 import com.devicehive.sspasov.client.utils.L;
@@ -28,8 +25,6 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
     // Constants
     // ---------------------------------------------------------------------------------------------
     private static final String TAG = NetworkDevicesActivity.class.getSimpleName();
-
-    private static final int TAG_GET_NETWORK_DEVICES = getTagId(GetNetworkDevicesCommand.class);
     public static final String EXTRA_NETWORK = "extra_network";
 
     // ---------------------------------------------------------------------------------------------
@@ -37,7 +32,7 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
     // ---------------------------------------------------------------------------------------------
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView networkDevicesListView;
-    private Network network;
+    //private Network network;
 
     private ProgressBar progressBar;
 
@@ -120,38 +115,20 @@ public class NetworkDevicesActivity extends BaseActivity implements AdapterView.
     }
 
     @Override
-    protected void onReceiveResult(final int resultCode, final int tagId, final Bundle resultData) {
-        L.d(TAG, "onReceiveResult()");
-        switch (resultCode) {
-            case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:
-                break;
-            case DeviceHiveResultReceiver.MSG_EXCEPTION:
-                final Throwable exception = DeviceClientCommand.getThrowable(resultData);
-                L.e(TAG, "Failed to execute network command", exception);
-                break;
-            case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
-                int statusCode = DeviceClientCommand.getStatusCode(resultData);
-                L.e(TAG, "Failed to execute network command. Status code: " + statusCode);
-                break;
-            case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
-                if (tagId == TAG_GET_NETWORK_DEVICES) {
-                    final List<DeviceData> devices =
-                            GetNetworkDevicesCommand.getNetworkDevices(resultData);
-                    L.d(TAG, "Fetched devices: " + devices);
-                    if (devices != null) {
-                        Collections.sort(devices, new Comparator<DeviceData>() {
-                            @Override
-                            public int compare(DeviceData lhs, DeviceData rhs) {
-                                return lhs.getName()
-                                        .compareToIgnoreCase(rhs.getName());
-                            }
-                        });
-                        networkDevicesListView.setAdapter(new NetworkDevicesAdapter(this, devices));
-                        progressBar.setVisibility(View.GONE);
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
+    protected void getRequestResult(int tagId, Bundle resultData) {
+        final List<DeviceData> devices = GetNetworkDevicesCommand.getNetworkDevices(resultData);
+        L.d(TAG, "Fetched devices: " + devices);
+        if (devices != null) {
+            Collections.sort(devices, new Comparator<DeviceData>() {
+                @Override
+                public int compare(DeviceData lhs, DeviceData rhs) {
+                    return lhs.getName()
+                            .compareToIgnoreCase(rhs.getName());
                 }
-                break;
+            });
+            networkDevicesListView.setAdapter(new NetworkDevicesAdapter(this, devices));
+            progressBar.setVisibility(View.GONE);
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 

@@ -1,0 +1,23 @@
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="General">
+        <EditTextPreference
+            android:key="KEY_SERVER_URL"
+            android:summary="Restart is required for the changes to take effect."
+            android:title="API Endpoint"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Optional">
+        <CheckBoxPreference
+            android:key="ASYNC_NOTIFICATIONS"
+            android:summary="Check for asynchronously notifications."
+            android:title="Async Notifications"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <com.devicehive.sspasov.client.views.VersionPreference
+            android:title="@string/app_name"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

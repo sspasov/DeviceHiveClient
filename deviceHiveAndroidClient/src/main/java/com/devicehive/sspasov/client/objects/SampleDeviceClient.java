@@ -13,21 +13,44 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SampleDeviceClient extends SingleDeviceClient {
-
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = "SampleDeviceClient";
 
-    private final List<NotificationsListener> notificationListeners = new LinkedList<NotificationsListener>();
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
+    private final List<NotificationsListener> notificationListeners = new LinkedList<>();
+    private final List<CommandListener> commandListeners = new LinkedList<>();
+    private final List<DeviceDataListener> deviceDataListeners = new LinkedList<>();
 
-    private final List<CommandListener> commandListeners = new LinkedList<CommandListener>();
-
-    private final List<DeviceDataListener> deviceDataListeners = new LinkedList<DeviceDataListener>();
-
-    public SampleDeviceClient(Context context, DeviceData deviceData) {
-        super(context, deviceData);
-    }
-
+    // ---------------------------------------------------------------------------------------------
+    // Interfaces
+    // ---------------------------------------------------------------------------------------------
     public interface NotificationsListener {
         void onReceivesNotification(Notification notification);
+    }
+
+    public interface DeviceDataListener {
+        void onReloadDeviceDataFinished();
+
+        void onReloadDeviceDataFailed();
+    }
+
+    public interface CommandListener {
+        void onStartSendingCommand(Command command);
+
+        void onFinishSendingCommand(Command command);
+
+        void onFailSendingCommand(Command command);
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
+    public SampleDeviceClient(Context context, DeviceData deviceData) {
+        super(context, deviceData);
     }
 
     public void addNotificationsListener(NotificationsListener listener) {
@@ -38,26 +61,12 @@ public class SampleDeviceClient extends SingleDeviceClient {
         notificationListeners.remove(listener);
     }
 
-    public interface DeviceDataListener {
-        void onReloadDeviceDataFinished();
-
-        void onReloadDeviceDataFailed();
-    }
-
     public void addDeviceDataListener(DeviceDataListener listener) {
         deviceDataListeners.add(listener);
     }
 
     public void removeDeviceDataListener(DeviceDataListener listener) {
         deviceDataListeners.remove(listener);
-    }
-
-    public interface CommandListener {
-        void onStartSendingCommand(Command command);
-
-        void onFinishSendingCommand(Command command);
-
-        void onFailSendingCommand(Command command);
     }
 
     public void addCommandListener(CommandListener listener) {
@@ -74,7 +83,48 @@ public class SampleDeviceClient extends SingleDeviceClient {
         deviceDataListeners.clear();
     }
 
+    // ---------------------------------------------------------------------------------------------
+    // Private methods
+    // ---------------------------------------------------------------------------------------------
+    private void notifyNotificationListeners(Notification notification) {
+        for (NotificationsListener listener : notificationListeners) {
+            listener.onReceivesNotification(notification);
+        }
+    }
 
+    private void notifyCommandListenersStartSending(Command command) {
+        for (CommandListener listener : commandListeners) {
+            listener.onStartSendingCommand(command);
+        }
+    }
+
+    private void notifyCommandListenersFinishSending(Command command) {
+        for (CommandListener listener : commandListeners) {
+            listener.onFinishSendingCommand(command);
+        }
+    }
+
+    private void notifyCommandListenersFailSending(Command command) {
+        for (CommandListener listener : commandListeners) {
+            listener.onFailSendingCommand(command);
+        }
+    }
+
+    private void notifyReloadDeviceDataFinished() {
+        for (DeviceDataListener listener : deviceDataListeners) {
+            listener.onReloadDeviceDataFinished();
+        }
+    }
+
+    private void notifyReloadDeviceDataFailed() {
+        for (DeviceDataListener listener : deviceDataListeners) {
+            listener.onReloadDeviceDataFailed();
+        }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Override methods
+    // ---------------------------------------------------------------------------------------------
     @Override
     protected boolean shouldReceiveNotificationAsynchronously(Notification notification) {
         return ClientConfig.ASYNC_NOTIFICATIONS;
@@ -123,41 +173,4 @@ public class SampleDeviceClient extends SingleDeviceClient {
     protected void onFailReloadingDeviceData() {
         notifyReloadDeviceDataFailed();
     }
-
-    private void notifyNotificationListeners(Notification notification) {
-        for (NotificationsListener listener : notificationListeners) {
-            listener.onReceivesNotification(notification);
-        }
-    }
-
-    private void notifyCommandListenersStartSending(Command command) {
-        for (CommandListener listener : commandListeners) {
-            listener.onStartSendingCommand(command);
-        }
-    }
-
-    private void notifyCommandListenersFinishSending(Command command) {
-        for (CommandListener listener : commandListeners) {
-            listener.onFinishSendingCommand(command);
-        }
-    }
-
-    private void notifyCommandListenersFailSending(Command command) {
-        for (CommandListener listener : commandListeners) {
-            listener.onFailSendingCommand(command);
-        }
-    }
-
-    private void notifyReloadDeviceDataFinished() {
-        for (DeviceDataListener listener : deviceDataListeners) {
-            listener.onReloadDeviceDataFinished();
-        }
-    }
-
-    private void notifyReloadDeviceDataFailed() {
-        for (DeviceDataListener listener : deviceDataListeners) {
-            listener.onReloadDeviceDataFailed();
-        }
-    }
-
 }

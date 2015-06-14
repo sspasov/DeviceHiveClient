@@ -5,7 +5,7 @@
 
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+        layout="@layout/view_toolbar"/>
 
     <com.devicehive.sspasov.client.views.SlidingTabLayout
         android:id="@+id/sliding_tabs"

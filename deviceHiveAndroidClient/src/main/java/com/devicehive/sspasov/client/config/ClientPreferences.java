@@ -5,14 +5,28 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 public class ClientPreferences {
+    // ---------------------------------------------------------------------------------------------
+    // Constants
+    // ---------------------------------------------------------------------------------------------
     private static final String TAG = ClientPreferences.class.getSimpleName();
 
     private final static String NAMESPACE = "";
+    private final static String KEY_SERVER_URL = NAMESPACE.concat("KEY_SERVER_URL");
+    private final static String KEY_USERNAME = NAMESPACE.concat("KEY_USERNAME");
+    private final static String KEY_PASSWORD = NAMESPACE.concat("KEY_PASSWORD");
+    private final static String KEY_ASYNC_NOTIFICATIONS = NAMESPACE.concat("KEY_ASYNC_NOTIFICATIONS");
+    private final static String KEY_FIRST_STARTUP = NAMESPACE.concat("KEY_FIRST_STARTUP");
+    private final static String KEY_REMEMBER_PASSWORD = NAMESPACE.concat("KEY_REMEMBER_PASSWORD");
 
+    // ---------------------------------------------------------------------------------------------
+    // Fields
+    // ---------------------------------------------------------------------------------------------
     private final Context context;
     private final SharedPreferences preferences;
 
-
+    // ---------------------------------------------------------------------------------------------
+    // Public methods
+    // ---------------------------------------------------------------------------------------------
     public ClientPreferences(final Context context) {
         this.context = context;
         this.preferences = context.getSharedPreferences(
@@ -23,10 +37,8 @@ public class ClientPreferences {
     /**
      * preference for server url
      */
-    private final static String KEY_SERVER_URL = NAMESPACE.concat("KEY_SERVER_URL");
-
     public String getServerUrl() {
-        return preferences.getString(KEY_SERVER_URL, null);
+        return preferences.getString(KEY_SERVER_URL, DeviceHiveConfig.DEFAULT_API_ENDPOINT);
     }
 
     public void setServerUrlSync(String serverUrl) {
@@ -38,9 +50,6 @@ public class ClientPreferences {
     /**
      * preference for username and password
      */
-    private final static String KEY_USERNAME = NAMESPACE.concat("KEY_USERNAME");
-    private final static String KEY_PASSWORD = NAMESPACE.concat("KEY_PASSWORD");
-
     public String getUsername() {
         return preferences.getString(KEY_USERNAME, DeviceHiveConfig.DEFAULT_USERNAME);
     }
@@ -48,7 +57,6 @@ public class ClientPreferences {
     public String getPassword() {
         return preferences.getString(KEY_PASSWORD, DeviceHiveConfig.DEFAULT_PASSWORD);
     }
-
 
     public void setCredentialsSync(String username, String password) {
         SharedPreferences.Editor editor = preferences.edit();
@@ -71,8 +79,6 @@ public class ClientPreferences {
     /**
      * preference for first time startup configuration
      */
-    private final static String KEY_FIRST_STARTUP = NAMESPACE.concat("KEY_FIRST_STARTUP");
-
     public boolean isFirstStartup() {
         return preferences.getBoolean(KEY_FIRST_STARTUP, DeviceHiveConfig.DEFAULT_FIRST_STARTUP);
     }
@@ -86,8 +92,6 @@ public class ClientPreferences {
     /**
      * preference for receiving notifications async
      */
-    private final static String KEY_ASYNC_NOTIFICATIONS = NAMESPACE.concat("KEY_ASYNC_NOTIFICATIONS");
-
     public boolean getAsyncNotifications() {
         return preferences.getBoolean(KEY_ASYNC_NOTIFICATIONS, DeviceHiveConfig.DEFAULT_ASYNC_NOTIFICATIONS);
     }
@@ -98,12 +102,9 @@ public class ClientPreferences {
         editor.apply();
     }
 
-
     /**
      * preference for remembering user password
      */
-    private final static String KEY_REMEMBER_PASSWORD = NAMESPACE.concat("KEY_REMEMBER_PASSWORD");
-
     public boolean getRememberPassword() {
         return preferences.getBoolean(KEY_REMEMBER_PASSWORD, DeviceHiveConfig.DEFAULT_REMEMBER_PASSWORD);
     }
